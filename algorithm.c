@@ -64,8 +64,6 @@ int main(int argc, char **argv){
 	}
 	var=(double*)malloc(RUN*sizeof(double));
 	
-
-
 	AllocArrays();	
 
 	U = (double*)malloc(DIM * sizeof(double));
@@ -112,9 +110,9 @@ int main(int argc, char **argv){
 		strcat(strf,".txt");
 		strcat(str,strf);
 		if((file = fopen(str,"a")) == NULL){
-    	    	printf("Erro ao abrir arquivo!!!\n\n");
-    	    	exit(1);
-    	  	}
+    	   	printf("Erro ao abrir arquivo!!!\n\n");
+    	   	exit(1);
+    	}
 		fprintf(file,"%s %14s %15s\n","#ITER","#BEST_FO","#MEDIA_FO");
 		fclose(file);
 		while(num_iter<MAX_ITER){
@@ -369,13 +367,3 @@ int main(int argc, char **argv){
 	
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-

@@ -672,6 +672,7 @@ double constr(double sol[]){//calculate penalization
 			}
 
 			pen *=P;
+			free(area);
 			break;
 		/*case 16:
 			ll=0;
@@ -847,7 +848,7 @@ double objfunc(double sol[], int cond){
 		for (i = 0; i < 10; i++) {
 			somF += ro*area[i]*length[i];
 		}
-
+		
 		return somF+top;
 	
 	/*case 16: //Heat Exchanger Design
@@ -863,7 +864,7 @@ void initPop(){
 	int j,k;
 	if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
 		for (j=0;j<POP_SIZE;j++){//each individual
-			fo[j]  = 0.0;
+			fo[j] = 0.0;
 			for (k=0; k<DIM;k++){ //each dimension of the individual
 				best[k] = 0.0;
 				pop[j][k] = randon(lb[0],ub[0]);
