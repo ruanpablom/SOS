@@ -19,7 +19,13 @@ double bestfo;//best fo value
 int best_index;//index for the best solution
 double *y; //constraint functions
 double *c; //penallity function constant
+int CORES;
 
+typedef struct{
+	int tid;
+	int inicio;
+	int fim;
+}slice;
 
 //Functions declarations
 double randon(double inferior, double superior);
@@ -29,6 +35,7 @@ void showParameters();
 void prepararObjFunc();
 double constr(double sol[]);
 double objfunc(double sol[], int cond);
+void *th_init_pop(void *arg);
 void initPop();
 void mutualism_phase(int index_i);
 void commensalism_phase(int index_i);

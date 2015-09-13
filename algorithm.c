@@ -67,12 +67,8 @@ int main(int argc, char **argv){
 	AllocArrays();	
 
 	U = (double*)malloc(DIM * sizeof(double));
-	//
-
 	
 
-	
-	
 	prepararObjFunc();
 	
 
@@ -87,7 +83,7 @@ int main(int argc, char **argv){
 				U[j] = pop[i][j];
 	
 			fo[i] = objfunc(U, 0);
-		}
+		}/**/
 		//Best current solution identification.
 		bestfo = fo[0];
 		best_index = 0;

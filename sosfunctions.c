@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <pthread.h>
 #include "sos.h"
 #include "mersenne.h"
 
@@ -14,22 +15,6 @@ double randon( double inferior, double superior){
 	double aux = (double)inferior + ((superior - inferior)*MT_randInt(RAND_MAX)/(RAND_MAX+1.0));
 	return aux;
 }
-
-
-/*void AllocArrays(int pop_size, int dim, double **pop, double *fo, double *best, double *ub, double *lb){
-	int j;
-
-	pop = (double**)malloc (pop_size*sizeof(double*));
-        for (j = 0;j < pop_size; j++)
-		pop[j] = (double*)malloc (dim * sizeof(double));
-
-	fo = (double*)malloc (pop_size*sizeof(double));
-
-	best = (double*)malloc (dim*sizeof(double));
-
-	ub=(double*)malloc (dim*sizeof(double));
-	lb=(double*)malloc (dim*sizeof(double));
-}*/
 
 void freeArrays(){
 	int i;
@@ -55,6 +40,7 @@ int GetParameters(char **argv){
 		ffscanf("POP_SIZE", file, "%d", &POP_SIZE);
 		ffscanf("DIM", file, "%d", &DIM); 
 		ffscanf("FUNCTION",file, "%d", &FUNCTION);
+		ffscanf("CORES",file, "%d", &CORES);
 	return 1;
     }
     fclose(file);
@@ -66,6 +52,7 @@ void showParameters(){
 	printf("MAX_ITER = %d\n", MAX_ITER);
 	printf("POP_SIZE = %d\n", POP_SIZE);
 	printf("DIM = %d\n", DIM);
+	printf("CORES = %d\n", CORES);
 	switch (FUNCTION){
 		case 0:
 			printf("FUNCTION = %s\n","Rastrigin");
@@ -860,10 +847,11 @@ double objfunc(double sol[], int cond){
     }
 }
 
-void initPop(){
+void *th_init_pop(void *arg){
 	int j,k;
+	slice *s = (slice*)arg;
 	if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
-		for (j=0;j<POP_SIZE;j++){//each individual
+		for (j=s->inicio;j<s->fim;j++){//each individual
 			fo[j] = 0.0;
 			for (k=0; k<DIM;k++){ //each dimension of the individual
 				best[k] = 0.0;
@@ -871,7 +859,7 @@ void initPop(){
 			}
 		}
 	}else{
-		for (j=0;j<POP_SIZE;j++){//each individual
+		for (j=s->inicio;j<s->fim;j++){//each individual
 			fo[j]  = 0.0;
 			for (k=0; k<DIM;k++){ //each dimension of the individual
 				best[k] = 0.0;
@@ -879,7 +867,36 @@ void initPop(){
 			}
 		}
 	}
+}
+
+void initPop(){
+	int i;	
+	int pedaco = ((double)POP_SIZE/(double)CORES); 
+	pthread_t *threads;
+	slice *args;
 	
+	threads = (pthread_t*)malloc(CORES*sizeof(pthread_t));
+	if(threads==NULL)exit(0);
+	args = (slice*)malloc(CORES*sizeof(slice));
+	if(threads==NULL)exit(0);
+
+	for(i=0;i<CORES-1;i++){
+		args[i].tid = i;
+		args[i].inicio = i*pedaco;
+		args[i].fim = args[i].inicio+(pedaco-1);
+		pthread_create(&threads[i], NULL, th_init_pop, (void *) (args+i));
+	}
+
+	args[CORES].tid = CORES;
+	args[CORES].inicio = (args[CORES-1].fim)+1;
+	args[CORES].fim = POP_SIZE;
+	
+	/*
+	for (i = 0; i < CORES; i++){
+    	pthread_join(threads[i], NULL);
+    }*/
+    free(args);
+    //free(threads);
 }
 
 void mutualism_phase(int index_i){
