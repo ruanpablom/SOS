@@ -12,7 +12,7 @@
 #define PIII 3.14159265359
 
 double randon( double inferior, double superior){
-	double aux = (double)inferior + ((superior - inferior)*MT_randInt(RAND_MAX)/(RAND_MAX+1.0));
+	double aux = (float)inferior + ((superior - inferior)*rand()/(RAND_MAX+1.0));
 	return aux;
 }
 
@@ -249,7 +249,7 @@ void prepararObjFunc(){
     	}
 }	
 
-double constr(double sol[]){//calculate penalization
+double constr(double *sol){//calculate penalization
 	double pen=0;
 	double r=0,m_1=0,j_1=0,s=0,d=0,pc=0,t1=0,t2=0,t=0,p=0,l=0,e=0,g_1=0,t_max=0,s_max=0,d_max=0;
 
@@ -692,12 +692,15 @@ double constr(double sol[]){//calculate penalization
 	return pen;
 }
 
-double objfunc(double sol[], int cond){
+double objfunc(double *sol, int cond){
+
     int j, i;
     double top = 0.00 , top1 = 0.00, top2 = 0.00;
     double aux = 0.0;
-    double aux1 = 0.0, pen=0;
-
+    double aux1 = 0.0;
+    //double pen=0;
+    //for(i=0;i<DIM;i++) printf("%g ",sol[i]);
+    //printf("\n");	
     double somF = 0.;
     double ro = 0.1;
 	double *area;
@@ -850,13 +853,15 @@ double objfunc(double sol[], int cond){
 void *th_init_pop(void *arg){
 	int j,k;
 	slice *s = (slice*)arg;
+
 	if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
 		for (j=s->inicio;j<s->fim;j++){//each individual
-			fo[j] = 0.0;
 			for (k=0; k<DIM;k++){ //each dimension of the individual
 				best[k] = 0.0;
 				pop[j][k] = randon(lb[0],ub[0]);
 			}
+			fo[j] = objfunc(pop[j], 0);
+
 		}
 	}else{
 		for (j=s->inicio;j<s->fim;j++){//each individual
@@ -865,8 +870,10 @@ void *th_init_pop(void *arg){
 				best[k] = 0.0;
 				pop[j][k] = randon(lb[k],ub[k]);
 			}
+			//fo[j] = objfunc(pop[j], 0);
 		}
 	}
+	return 0;
 }
 
 void initPop(){
@@ -890,6 +897,7 @@ void initPop(){
 	args[CORES].tid = CORES;
 	args[CORES].inicio = (args[CORES-1].fim)+1;
 	args[CORES].fim = POP_SIZE;
+	pthread_create(&threads[i], NULL, th_init_pop, (void *) (args+CORES));
 	
 	/*
 	for (i = 0; i < CORES; i++){
@@ -917,8 +925,8 @@ void mutualism_phase(int index_i){
 	new_x_j = (double*)malloc(DIM*sizeof(double));	
 	mutual = (double*)malloc(DIM*sizeof(double));
 	
-	bf1=(int)randon(1,3);//benefit factor1
-	bf2=(int)randon(1,3);//benefit factor2
+	bf1=(int)randon(1,2.5);//benefit factor1
+	bf2=(int)randon(1,2.5);//benefit factor2
 	for(i=0;i<DIM;i++){
 		array_rand[i]=randon(0,1);
 	}

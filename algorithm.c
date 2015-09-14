@@ -23,13 +23,11 @@ void AllocArrays();
 
 /*Main program of the search algorithm*/
 int main(int argc, char **argv){
-	int i, j, k, r;
-	double *U; //[DIM]; // vetor para cálculo da func obj.
+	int i, k, r;
 	double avg;
 	double stdDev;
 	double *var;
 	int num_fit_eval=0;
-	//int max_fit_eval;
 	int num_iter=0;
 	double mediafo=0;
 	char str[]="dadosplot//dadosplot";
@@ -48,7 +46,6 @@ int main(int argc, char **argv){
 	//
 
 	srand(time(NULL));
-	MT_seed();
 
 	if (GetParameters(argv) == -1){	//read input file
 		return 0;
@@ -62,40 +59,32 @@ int main(int argc, char **argv){
 		mediaBfo[i]=0;
 		mediaM[i]=0;
 	}
+
 	var=(double*)malloc(RUN*sizeof(double));
 	
-	AllocArrays();	
-
-	U = (double*)malloc(DIM * sizeof(double));
-	
+	AllocArrays();		
 
 	prepararObjFunc();
-	
 
 	for (r=0;r<RUN;r++){	
 		//Init population
 		initPop();
-		bestfo = 0.0;
-		best_index = 0;
-		//Objective function calculation for each individual
-		for (i = 0;i<POP_SIZE;i++){
-			for (j = 0;j<DIM;j++)
-				U[j] = pop[i][j];
-	
-			fo[i] = objfunc(U, 0);
-		}/**/
-		//Best current solution identification.
-		bestfo = fo[0];
-		best_index = 0;
+
+
+
+		bestfo = 1000000000;
 		for(i=0;i<POP_SIZE;i++){
-			if (fo[i]<=bestfo) {
-	       		bestfo=fo[i];
-	       		for(j=0;j<DIM;j++){
-	        	   best[j]=pop[i][j];
-				}
-			best_index = i;
-	        }
+			//printf("\n\n%g %i\n",bestfo,best_index);
+			fo[i] = objfunc(pop[i], 0);
+			if(fo[i]<=bestfo && fo[i]>0){
+				best_index=i;
+				bestfo=fo[i];
+			}
+			//printf("%g\n",fo[i]);
 		}
+		
+
+		for(i=0;i<DIM;i++)best[i]=pop[best_index][i];
 
 		num_fit_eval=0;
 		//max_fit_eval;
@@ -120,15 +109,13 @@ int main(int argc, char **argv){
 				num_fit_eval++;
 				parasitism_phase(i);
 				num_fit_eval++;
-				for(j=0;j<POP_SIZE;j++){
-					if(fo[j]<=bestfo ){
-						bestfo=fo[j];
-						best_index=j;
+				for(k=0;k<POP_SIZE;k++){
+					if(fo[k]<=bestfo && fo[i]!=0){
+						bestfo=fo[k];
+						best_index=k;
 					}
 				}
-				for(j=0;j<DIM;j++){
-					best[j]=pop[best_index][j];
-				}	
+				for(k=0;k<DIM;k++)best[k]=pop[best_index][k];
 			}
 			for(i=0;i<POP_SIZE;i++){
 				mediafo+=fo[i];
@@ -143,7 +130,9 @@ int main(int argc, char **argv){
 			mediaM[num_iter]+=mediafo;//sum of all mediafo in the num_iter position
 			mediaBfo[num_iter]+=bestfo;//sum of all bestfo	in the num_iter position
 		}
-	
+
+		
+		
 		//Loop de Iterações.
 	
 		if((file = fopen("dadosplot//exec.txt","a")) == NULL){
@@ -359,7 +348,5 @@ int main(int argc, char **argv){
 	fprintf(file,"====================\n");
 	fclose(file);
 	freeArrays(POP_SIZE, pop, fo, best, ub, lb, y, c);
-	free(U);
-	
 	return 0;
 }

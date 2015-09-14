@@ -21,6 +21,8 @@ double *y; //constraint functions
 double *c; //penallity function constant
 int CORES;
 
+
+
 typedef struct{
 	int tid;
 	int inicio;
@@ -33,8 +35,8 @@ void freeArrays();
 int GetParameters(char **argv);
 void showParameters();
 void prepararObjFunc();
-double constr(double sol[]);
-double objfunc(double sol[], int cond);
+double constr(double *sol);
+double objfunc(double *sol, int cond);
 void *th_init_pop(void *arg);
 void initPop();
 void mutualism_phase(int index_i);

@@ -1,156 +1,156 @@
 RUN: 0
-Best solution: 0.0625 0.185232 10 126.738  Fo:0 
-g1=0.1305 Fail g2=-0.0898317 Ok g3=1.252e+06 Fail g4=-113.262 Ok
+Best solution: 0.848276 0.420066 43.9512 154.974  Fo:0 
+g1=-1.75093e-05 Ok g2=-0.000772041 Ok g3=-111.708 Ok g4=-85.0262 Ok
 N_fit_eval:500000 
 
 RUN: 1
-Best solution: 0.17014 0.0625 16.0653 150.686  Fo:5897.99 
-g1=0.13992 Fail g2=0.0907629 Fail g3=1.15645e+06 Fail g4=-89.3137 Ok
+Best solution: 0.156845 0.300147 10 53.8413  Fo:6019.49 
+g1=0.0361548 Fail g2=-0.204747 Ok g3=1.2749e+06 Fail g4=-186.159 Ok
 N_fit_eval:500000 
 
 RUN: 2
-Best solution: 0.77817 0.38465 40.3197 200  Fo:5886.14 
-g1=1.01915e-06 Fail g2=1.26374e-07 Fail g3=-8.3872 Ok g4=-40 Ok
+Best solution: 0.7788 0.385269 40.3444 199.771  Fo:5890.37 
+g1=-0.000152406 Ok g2=-0.000383281 Ok g3=-594.885 Ok g4=-40.2286 Ok
 N_fit_eval:500000 
 
 RUN: 3
-Best solution: 2.05417 5.52632 167.592 150.064  Fo:5885.37 
-g1=1.18035 Fail g2=-3.92749 Ok g3=-3.16626e+07 Ok g4=-89.9362 Ok
+Best solution: 6.12865 0.835786 62.1834 157.735  Fo:5890.37 
+g1=-4.92851 Ok g2=-0.242557 Ok g3=-1.62733e+06 Ok g4=-82.2647 Ok
 N_fit_eval:500000 
 
 RUN: 4
-Best solution: 0.778164 0.384647 40.3196 200  Fo:0 
-g1=4.37963e-06 Fail g2=1.74961e-06 Fail g3=-0.00220888 Ok g4=-40 Ok
+Best solution: 2.37133 0.639382 51.8496 72.1711  Fo:0 
+g1=-1.37064 Ok g2=-0.144736 Ok g3=102574 Fail g4=-167.829 Ok
 N_fit_eval:500000 
 
 RUN: 5
-Best solution: 0.778164 0.384648 40.3196 200  Fo:0 
-g1=4.17811e-06 Fail g2=1.47265e-06 Fail g3=-0.0118797 Ok g4=-40 Ok
+Best solution: 4.24956 3.8064 92.0427 184.614  Fo:0 
+g1=-2.47314 Ok g2=-2.92831 Ok g3=-6.88384e+06 Ok g4=-55.386 Ok
 N_fit_eval:500000 
 
 RUN: 6
-Best solution: 3.32671 0.163532 131.48 29.9434  Fo:0 
-g1=-0.789154 Ok g2=1.09078 Fail g3=-9.85077e+06 Ok g4=-210.057 Ok
+Best solution: 2.50149 4.13022 18.6801 128.613  Fo:0 
+g1=-2.14096 Ok g2=-3.95201 Ok g3=1.12771e+06 Fail g4=-111.387 Ok
 N_fit_eval:500000 
 
 RUN: 7
-Best solution: 0.0862802 3.04669 94.259 69.041  Fo:0 
-g1=1.73292 Fail g2=-2.14746 Ok g3=-4.13908e+06 Ok g4=-170.959 Ok
+Best solution: 0.236134 0.308499 26.4052 197.086  Fo:0 
+g1=0.273487 Fail g2=-0.0565933 Ok g3=787179 Fail g4=-42.9142 Ok
 N_fit_eval:500000 
 
 RUN: 8
-Best solution: 0.778165 0.384648 40.3196 200  Fo:0 
-g1=3.47536e-06 Fail g2=1.19875e-06 Fail g3=-0.0293166 Ok g4=-40 Ok
+Best solution: 5.17022 5.37874 187.727 58.2875  Fo:0 
+g1=-1.54709 Ok g2=-3.58782 Ok g3=-3.28692e+07 Ok g4=-181.712 Ok
 N_fit_eval:500000 
 
 RUN: 9
-Best solution: 0.778165 0.384648 40.3196 200  Fo:0 
-g1=3.45866e-06 Fail g2=1.23137e-06 Fail g3=-0.00508084 Ok g4=-40 Ok
+Best solution: 0.778423 0.385453 40.3311 199.753  Fo:0 
+g1=-3.35935e-05 Ok g2=-0.000694721 Ok g3=446.456 Fail g4=-40.2467 Ok
 N_fit_eval:500000 
 
 RUN: 10
-Best solution: 3.65552 4.47582 26.5458 43.2353  Fo:0 
-g1=-3.14319 Ok g2=-4.22257 Ok g3=1.12193e+06 Fail g4=-196.765 Ok
+Best solution: 4.75569 4.0532 196.479 69.7513  Fo:0 
+g1=-0.963638 Ok g2=-2.17878 Ok g3=-3.8935e+07 Ok g4=-170.249 Ok
 N_fit_eval:500000 
 
 RUN: 11
-Best solution: 0.778165 0.384648 40.3196 200  Fo:0 
-g1=3.54683e-06 Fail g2=1.21742e-06 Fail g3=-0.000967853 Ok g4=-40 Ok
+Best solution: 4.69657 1.62852 128.773 117.88  Fo:0 
+g1=-2.21125 Ok g2=-0.400022 Ok g3=-1.37897e+07 Ok g4=-122.12 Ok
 N_fit_eval:500000 
 
 RUN: 12
-Best solution: 1.60116 3.81807 100.029 22.1283  Fo:0 
-g1=0.329395 Fail g2=-2.86379 Ok g3=-3.59202e+06 Ok g4=-217.872 Ok
+Best solution: 0.778234 0.385075 40.3203 199.991  Fo:0 
+g1=-5.28383e-05 Ok g2=-0.000419904 Ok g3=1.22907 Fail g4=-40.0092 Ok
 N_fit_eval:500000 
 
 RUN: 13
-Best solution: 0.778165 0.384648 40.3196 200  Fo:0 
-g1=3.53842e-06 Fail g2=1.25053e-06 Fail g3=-7.68094e-05 Ok g4=-40 Ok
+Best solution: 1.9558 5.47826 179.06 45.6854  Fo:0 
+g1=1.50005 Fail g2=-3.77003 Ok g3=-2.7354e+07 Ok g4=-194.315 Ok
 N_fit_eval:500000 
 
 RUN: 14
-Best solution: 0.778165 0.384648 40.3196 200  Fo:0 
-g1=3.58233e-06 Fail g2=1.20161e-06 Fail g3=-0.234337 Ok g4=-40.0001 Ok
+Best solution: 2.17939 0.796557 139.06 82.9864  Fo:0 
+g1=0.504461 Fail g2=0.530072 Fail g3=-1.50095e+07 Ok g4=-157.014 Ok
 N_fit_eval:500000 
 
 RUN: 15
-Best solution: 0.778165 0.384648 40.3196 200  Fo:0 
-g1=3.52521e-06 Fail g2=1.38606e-06 Fail g3=-0.00109606 Ok g4=-40 Ok
+Best solution: 1.75994 1.52841 71.666 31.9994  Fo:0 
+g1=-0.376784 Ok g2=-0.844712 Ok g3=-762118 Ok g4=-208.001 Ok
 N_fit_eval:500000 
 
 RUN: 16
-Best solution: 3.71018 3.92163 78.974 60.5055  Fo:0 
-g1=-2.18599 Ok g2=-3.16822 Ok g3=-1.95273e+06 Ok g4=-179.495 Ok
+Best solution: 0.262382 0.300374 30.9248 135.155  Fo:0 
+g1=0.334468 Fail g2=-0.00535087 Ok g3=766052 Fail g4=-104.845 Ok
 N_fit_eval:500000 
 
 RUN: 17
-Best solution: 0.366195 4.97151 105.601 174.712  Fo:0 
-g1=1.6719 Fail g2=-3.96408 Ok g3=-9.75749e+06 Ok g4=-65.2882 Ok
+Best solution: 2.06157 2.80679 18.07 153.796  Fo:0 
+g1=-1.71282 Ok g2=-2.63441 Ok g3=1.11352e+06 Fail g4=-86.2037 Ok
 N_fit_eval:500000 
 
 RUN: 18
-Best solution: 4.97299 0.902121 80.9689 156.261  Fo:0 
-g1=-3.41029 Ok g2=-0.129678 Ok g3=-4.14591e+06 Ok g4=-83.7392 Ok
+Best solution: 3.90738 5.2839 138.557 103.542  Fo:0 
+g1=-1.23323 Ok g2=-3.96207 Ok g3=-1.60911e+07 Ok g4=-136.458 Ok
 N_fit_eval:500000 
 
 RUN: 19
-Best solution: 4.57159 5.82329 175.068 143.301  Fo:0 
-g1=-1.19278 Ok g2=-4.15314 Ok g3=-3.49773e+07 Ok g4=-96.6991 Ok
+Best solution: 0.778397 0.384917 40.3317 199.835  Fo:0 
+g1=4.08269e-06 Fail g2=-0.000153508 Ok g3=-14.0383 Ok g4=-40.1647 Ok
 N_fit_eval:500000 
 
 RUN: 20
-Best solution: 0.778165 0.384648 40.3196 200  Fo:0 
-g1=3.62369e-06 Fail g2=1.37699e-06 Fail g3=-1.8673e-07 Ok g4=-40 Ok
+Best solution: 0.975411 2.96153 159.347 80.1175  Fo:0 
+g1=2.09999 Fail g2=-1.44135 Ok g3=-2.20431e+07 Ok g4=-159.883 Ok
 N_fit_eval:500000 
 
 RUN: 21
-Best solution: 1.50731 4.54603 83.5415 126.391  Fo:0 
-g1=0.10504 Fail g2=-3.74904 Ok g3=-3.9175e+06 Ok g4=-113.609 Ok
+Best solution: 0.0625 0.0625 10 20.1597  Fo:0 
+g1=0.1305 Fail g2=0.0329 Fail g3=1.28548e+06 Fail g4=-219.84 Ok
 N_fit_eval:500000 
 
 RUN: 22
-Best solution: 6.11981 5.80452 151.281 71.7391  Fo:0 
-g1=-3.20007 Ok g2=-4.36129 Ok g3=-1.83645e+07 Ok g4=-168.261 Ok
+Best solution: 0.218676 0.088868 10 19.4903  Fo:0 
+g1=-0.0256759 Ok g2=0.006532 Fail g3=1.28569e+06 Fail g4=-220.51 Ok
 N_fit_eval:500000 
 
 RUN: 23
-Best solution: 2.79715 5.18166 51.4111 123.041  Fo:0 
-g1=-1.80491 Ok g2=-4.69119 Ok g3=-294874 Ok g4=-116.959 Ok
+Best solution: 0.706409 0.108919 21.0662 159.787  Fo:0 
+g1=-0.299831 Ok g2=0.0920529 Fail g3=1.03406e+06 Fail g4=-80.2125 Ok
 N_fit_eval:500000 
 
 RUN: 24
-Best solution: 0.778165 0.384648 40.3196 200  Fo:0 
-g1=3.62298e-06 Fail g2=1.46667e-06 Fail g3=-4.32169e-05 Ok g4=-40 Ok
+Best solution: 3.74648 0.641477 144.453 145.415  Fo:0 
+g1=-0.958542 Ok g2=0.736601 Fail g3=-2.08625e+07 Ok g4=-94.5851 Ok
 N_fit_eval:500000 
 
 RUN: 25
-Best solution: 4.97117 3.8415 32.9715 123.716  Fo:0 
-g1=-4.33482 Ok g2=-3.52695 Ok g3=723330 Fail g4=-116.284 Ok
+Best solution: 2.04539 0.136819 138.646 112.709  Fo:0 
+g1=0.63048 Fail g2=1.18586 Fail g3=-1.66742e+07 Ok g4=-127.291 Ok
 N_fit_eval:500000 
 
 RUN: 26
-Best solution: 0.778165 0.384648 40.3196 200  Fo:0 
-g1=3.63026e-06 Fail g2=1.44552e-06 Fail g3=-2.64542e-06 Ok g4=-40 Ok
+Best solution: 5.55765 3.69399 157.039 38.6498  Fo:0 
+g1=-2.5268 Ok g2=-2.19584 Ok g3=-1.79207e+07 Ok g4=-201.35 Ok
 N_fit_eval:500000 
 
 RUN: 27
-Best solution: 2.81793 1.03316 136.011 172.915  Fo:0 
-g1=-0.192925 Ok g2=0.26438 Fail g3=-1.92923e+07 Ok g4=-67.0855 Ok
+Best solution: 5.27139 4.02246 54.3822 87.6297  Fo:0 
+g1=-4.22182 Ok g2=-3.50365 Ok g3=-191857 Ok g4=-152.37 Ok
 N_fit_eval:500000 
 
 RUN: 28
-Best solution: 0.778165 0.384648 40.3196 200  Fo:0 
-g1=3.63026e-06 Fail g2=1.44552e-06 Fail g3=-2.64542e-06 Ok g4=-40 Ok
+Best solution: 5.35704 0.200217 88.7202 176.858  Fo:0 
+g1=-3.64474 Ok g2=0.646174 Fail g3=-6.00261e+06 Ok g4=-63.1423 Ok
 N_fit_eval:500000 
 
 RUN: 29
-Best solution: 0.778165 0.384648 40.3196 200  Fo:0 
-g1=3.63026e-06 Fail g2=1.44552e-06 Fail g3=-2.64542e-06 Ok g4=-40 Ok
+Best solution: 0.576813 0.226892 16.2261 135.06  Fo:0 
+g1=-0.26365 Ok g2=-0.0720946 Ok g3=1.16639e+06 Fail g4=-104.94 Ok
 N_fit_eval:500000 
 
 ====================
 Best Fo: 0
-Avg: 0
-StdDev: 0
-Feasible: 5
+Avg: 1082.76
+StdDev: 2297.04
+Feasible: 11
 ====================
