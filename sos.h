@@ -1,10 +1,18 @@
 #ifndef SOSFUNCTIONS_H
 #define SOSFUNCTIONS_H
 
+typedef struct{
+	int tid;
+	int inicio;
+	int fim;
+}slice;
+
+
 /* Control Parameters of the search algorithm*/
 int POP_SIZE;  /* The number of candidate solutions*/
 int MAX_ITER; /*The number of iterations*/
 int FUNCTION;
+int CORES;
 //Problem definitions
 int DIM;//number of problem variables
 double *lb;//lower bound of the variables
@@ -19,15 +27,12 @@ double bestfo;//best fo value
 int best_index;//index for the best solution
 double *y; //constraint functions
 double *c; //penallity function constant
-int CORES;
+int num_fit_eval;
+int num_iter;
+
+slice *argThread;
 
 
-
-typedef struct{
-	int tid;
-	int inicio;
-	int fim;
-}slice;
 
 //Functions declarations
 double randon(double inferior, double superior);
@@ -46,5 +51,6 @@ int AvgStdDev(double *Avg,double *StdDev,double Var[]);
 void plot(FILE *shellComands, char *run);
 char *converteDecChar(char *strf, int dec);
 int ffscanf(char *fieldname, FILE *fp, char *format, void *inbuffer);
+void sos_iter();
 
 #endif

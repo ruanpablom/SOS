@@ -10,6 +10,10 @@
 
 #define FAIL 0
 #define PIII 3.14159265359
+#define MEGEXTRA 1000000
+
+pthread_mutex_t data_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_attr_t attr;
 
 double randon( double inferior, double superior){
 	double aux = (float)inferior + ((superior - inferior)*rand()/(RAND_MAX+1.0));
@@ -850,14 +854,13 @@ double objfunc(double *sol, int cond){
     }
 }
 
-void *th_init_pop(void *arg){
+void *th_init_pop(void *argThread){
 	int j,k;
-	slice *s = (slice*)arg;
+	slice *s = (slice*)argThread;
 
 	if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
 		for (j=s->inicio;j<s->fim;j++){//each individual
 			for (k=0; k<DIM;k++){ //each dimension of the individual
-				best[k] = 0.0;
 				pop[j][k] = randon(lb[0],ub[0]);
 			}
 			fo[j] = objfunc(pop[j], 0);
@@ -865,9 +868,7 @@ void *th_init_pop(void *arg){
 		}
 	}else{
 		for (j=s->inicio;j<s->fim;j++){//each individual
-			fo[j]  = 0.0;
 			for (k=0; k<DIM;k++){ //each dimension of the individual
-				best[k] = 0.0;
 				pop[j][k] = randon(lb[k],ub[k]);
 			}
 			//fo[j] = objfunc(pop[j], 0);
@@ -876,35 +877,83 @@ void *th_init_pop(void *arg){
 	return 0;
 }
 
+void *th_sos(void* argThread){
+	int i,k;
+	slice *s = (slice*)argThread;
+
+	for(i=s->inicio;i<s->fim;i++){
+		pthread_mutex_lock(&data_mutex);
+		mutualism_phase(i);
+		pthread_mutex_unlock(&data_mutex);
+		num_fit_eval+=2;
+		pthread_mutex_lock(&data_mutex);
+		commensalism_phase(i);
+		pthread_mutex_unlock(&data_mutex);
+		num_fit_eval++;
+		pthread_mutex_lock(&data_mutex);
+		parasitism_phase(i);
+		pthread_mutex_unlock(&data_mutex);
+		num_fit_eval++;
+		pthread_mutex_lock(&data_mutex);
+		for(k=0;k<POP_SIZE;k++){
+			if(fo[k]<=bestfo && fo[i]!=0){
+				bestfo=fo[k];
+				best_index=k;
+			}
+		}
+		for(k=0;k<DIM;k++)best[k]=pop[best_index][k];
+		pthread_mutex_unlock(&data_mutex);
+	}
+	return 0;
+}
+
+void sos_iter(){
+	int i;	
+	pthread_t *threads;
+	size_t stacksize;
+	
+	threads = (pthread_t*)malloc(CORES*sizeof(pthread_t));
+	if(threads==NULL)exit(0);
+
+	pthread_attr_init(&attr);
+    pthread_attr_getstacksize (&attr, &stacksize);	
+	stacksize = sizeof(double)*CORES+MEGEXTRA;
+	pthread_attr_setstacksize (&attr, stacksize);
+
+	for (i = 0; i < CORES; ++i){
+		pthread_create(&threads[i], NULL, th_sos, (void *) (argThread+i));
+	}
+}
+
 void initPop(){
 	int i;	
 	int pedaco = ((double)POP_SIZE/(double)CORES); 
 	pthread_t *threads;
-	slice *args;
-	
+	size_t stacksize;
+
 	threads = (pthread_t*)malloc(CORES*sizeof(pthread_t));
 	if(threads==NULL)exit(0);
-	args = (slice*)malloc(CORES*sizeof(slice));
+	argThread = (slice*)malloc(CORES*sizeof(slice));
 	if(threads==NULL)exit(0);
 
+	pthread_attr_init(&attr);
+    pthread_attr_getstacksize (&attr, &stacksize);	
+	stacksize = sizeof(double)*CORES+MEGEXTRA;
+	pthread_attr_setstacksize (&attr, stacksize);
+
 	for(i=0;i<CORES-1;i++){
-		args[i].tid = i;
-		args[i].inicio = i*pedaco;
-		args[i].fim = args[i].inicio+(pedaco-1);
-		pthread_create(&threads[i], NULL, th_init_pop, (void *) (args+i));
+		argThread[i].tid = i;
+		argThread[i].inicio = i*pedaco;
+		argThread[i].fim = argThread[i].inicio+(pedaco-1);
+		pthread_create(&threads[i], NULL, th_init_pop, (void *) (argThread+i));
 	}
 
-	args[CORES].tid = CORES;
-	args[CORES].inicio = (args[CORES-1].fim)+1;
-	args[CORES].fim = POP_SIZE;
-	pthread_create(&threads[i], NULL, th_init_pop, (void *) (args+CORES));
-	
-	/*
-	for (i = 0; i < CORES; i++){
-    	pthread_join(threads[i], NULL);
-    }*/
-    free(args);
-    //free(threads);
+	argThread[CORES].tid = CORES;
+	argThread[CORES].inicio = (argThread[CORES-1].fim)+1;
+	argThread[CORES].fim = POP_SIZE;
+	pthread_create(&threads[i], NULL, th_init_pop, (void *) (argThread+CORES));
+
+
 }
 
 void mutualism_phase(int index_i){

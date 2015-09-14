@@ -27,8 +27,6 @@ int main(int argc, char **argv){
 	double avg;
 	double stdDev;
 	double *var;
-	int num_fit_eval=0;
-	int num_iter=0;
 	double mediafo=0;
 	char str[]="dadosplot//dadosplot";
 	char strf[100];
@@ -72,7 +70,7 @@ int main(int argc, char **argv){
 
 
 
-		bestfo = 1000000000;
+		bestfo = 10000000;
 		for(i=0;i<POP_SIZE;i++){
 			//printf("\n\n%g %i\n",bestfo,best_index);
 			fo[i] = objfunc(pop[i], 0);
@@ -87,7 +85,6 @@ int main(int argc, char **argv){
 		for(i=0;i<DIM;i++)best[i]=pop[best_index][i];
 
 		num_fit_eval=0;
-		//max_fit_eval;
 		num_iter=0;
 		mediafo=0;
 		strcpy(str,"dadosplot//dadosplot");
@@ -102,21 +99,7 @@ int main(int argc, char **argv){
 		fclose(file);
 		while(num_iter<MAX_ITER){
 			num_iter++;
-			for(i=0;i<POP_SIZE;i++){
-				mutualism_phase(i);
-				num_fit_eval+=2;
-				commensalism_phase(i);
-				num_fit_eval++;
-				parasitism_phase(i);
-				num_fit_eval++;
-				for(k=0;k<POP_SIZE;k++){
-					if(fo[k]<=bestfo && fo[i]!=0){
-						bestfo=fo[k];
-						best_index=k;
-					}
-				}
-				for(k=0;k<DIM;k++)best[k]=pop[best_index][k];
-			}
+			sos_iter();
 			for(i=0;i<POP_SIZE;i++){
 				mediafo+=fo[i];
 			}
@@ -348,5 +331,6 @@ int main(int argc, char **argv){
 	fprintf(file,"====================\n");
 	fclose(file);
 	freeArrays(POP_SIZE, pop, fo, best, ub, lb, y, c);
+	
 	return 0;
 }
