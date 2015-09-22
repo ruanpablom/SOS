@@ -1,6 +1,6 @@
 
 #include <stdio.h>
-#include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
@@ -21,15 +21,17 @@ double randon( double inferior, double superior){
 }
 
 void freeArrays(){
-	int i;
+	//int i;
 	free(fo);
 	free(best);
 	free(lb);
 	free(ub);
-	for (i = 0; i < POP_SIZE; i++){
+	/*for (i = 0; i < POP_SIZE; i++){
 		free(pop[i]);
-	}
+	}*/
+	free(pop[0]);	
 	free(pop);
+	free_slice();
 }
 
 int GetParameters(char **argv){
@@ -254,6 +256,7 @@ void prepararObjFunc(){
 }	
 
 double constr(double *sol){//calculate penalization
+	double y[rest];
 	double pen=0;
 	double r=0,m_1=0,j_1=0,s=0,d=0,pc=0,t1=0,t2=0,t=0,p=0,l=0,e=0,g_1=0,t_max=0,s_max=0,d_max=0;
 
@@ -863,65 +866,145 @@ void *th_init_pop(void *argThread){
 			for (k=0; k<DIM;k++){ //each dimension of the individual
 				pop[j][k] = randon(lb[0],ub[0]);
 			}
-			fo[j] = objfunc(pop[j], 0);
-
 		}
 	}else{
 		for (j=s->inicio;j<s->fim;j++){//each individual
 			for (k=0; k<DIM;k++){ //each dimension of the individual
 				pop[j][k] = randon(lb[k],ub[k]);
 			}
-			//fo[j] = objfunc(pop[j], 0);
 		}
 	}
-	return 0;
 }
 
 void *th_sos(void* argThread){
 	int i,k;
 	slice *s = (slice*)argThread;
 
+	//printf("Thread %i criada\n",s->tid);
 	for(i=s->inicio;i<s->fim;i++){
-		pthread_mutex_lock(&data_mutex);
-		mutualism_phase(i);
-		pthread_mutex_unlock(&data_mutex);
+		//pthread_mutex_lock(&data_mutex);
+		mutualism_phase(i,s->pop_th,s->best_th,s->fo_th);
+		//pthread_mutex_unlock(&data_mutex);
 		num_fit_eval+=2;
-		pthread_mutex_lock(&data_mutex);
-		commensalism_phase(i);
-		pthread_mutex_unlock(&data_mutex);
+		//pthread_mutex_lock(&data_mutex);
+		commensalism_phase(i,s->pop_th, s->best_th, s->fo_th);
+		//pthread_mutex_unlock(&data_mutex);
 		num_fit_eval++;
-		pthread_mutex_lock(&data_mutex);
-		parasitism_phase(i);
-		pthread_mutex_unlock(&data_mutex);
+		//pthread_mutex_lock(&data_mutex);
+		parasitism_phase(i, s->pop_th, s->fo_th);
+		//pthread_mutex_unlock(&data_mutex);
 		num_fit_eval++;
-		pthread_mutex_lock(&data_mutex);
+		//pthread_mutex_lock(&data_mutex);
 		for(k=0;k<POP_SIZE;k++){
-			if(fo[k]<=bestfo && fo[i]!=0){
-				bestfo=fo[k];
-				best_index=k;
+			if(s->fo_th[k] <= s->bestfo_th){
+				s->bestfo_th=s->fo_th[k];
+				s->best_index_th=k;
 			}
 		}
-		for(k=0;k<DIM;k++)best[k]=pop[best_index][k];
-		pthread_mutex_unlock(&data_mutex);
+		for(k=0;k<DIM;k++)s->best_th[k]=s->pop_th[(s->best_index_th)][k];
+		//pthread_mutex_unlock(&data_mutex);
 	}
-	return 0;
 }
 
 void sos_iter(){
 	int i;	
 	pthread_t *threads;
-	size_t stacksize;
-	
+
 	threads = (pthread_t*)malloc(CORES*sizeof(pthread_t));
 	if(threads==NULL)exit(0);
-
-	pthread_attr_init(&attr);
-    pthread_attr_getstacksize (&attr, &stacksize);	
-	stacksize = sizeof(double)*CORES+MEGEXTRA;
-	pthread_attr_setstacksize (&attr, stacksize);
+	
+	cpy_slice_pointers();
+	cpy_best();
 
 	for (i = 0; i < CORES; ++i){
 		pthread_create(&threads[i], NULL, th_sos, (void *) (argThread+i));
+	}
+		
+	for (i = 0; i < CORES; i++){
+      	pthread_join(threads[i], NULL);
+   	}
+   	join_pop();
+   	free(threads);
+}
+
+void join_pop(){
+	int i,j;
+	int index_m = 0;
+	int ib=0;
+	
+	for(i = 0 ; i < POP_SIZE ; i++){
+		for(j=0;j<CORES;j++){
+			if(argThread[j].fo_th[i] < argThread[index_m].fo_th[i] && argThread[j].fo_th[i] > 0) index_m = j;
+		}
+		fo[i] = argThread[index_m].fo_th[i];
+		for(j=0;j<DIM;j++){
+			pop[i][j] = argThread[index_m].pop_th[i][j];
+		}
+	}
+	for(i=0;i<CORES;i++){
+		if(argThread[i].bestfo_th < argThread[ib].bestfo_th && argThread[i].bestfo_th > 0) ib = i;
+	}
+	bestfo = argThread[ib].bestfo_th;
+	best_index = argThread[ib].best_index_th;
+	for(j=0;j<DIM;j++){
+		best[j] = argThread[ib].best_th[j];
+	}
+}
+
+void alloc_slice_pointers(){
+	int i,j;
+	for(i=0;i<CORES;i++){
+		argThread[i].pop_th = (double**)malloc(POP_SIZE*sizeof(double*));
+		if(argThread[i].pop_th == NULL)exit(0);
+		double *dados = (double*)malloc(sizeof(double)*DIM*POP_SIZE);	
+        if(dados==NULL)exit(0);
+        for (j = 0;j < POP_SIZE; j++){
+			argThread[i].pop_th[j] = &dados[j*DIM];
+		}
+
+		argThread[i].best_th = (double*)malloc(DIM*sizeof(double));
+		if(argThread[i].best_th==NULL)exit(0);
+		
+		argThread[i].fo_th = (double*)malloc(POP_SIZE*sizeof(double));
+		if(argThread[i].fo_th==NULL)exit(0);
+	}	
+}
+
+void free_slice(){
+	int i,j;
+	for(i=0;i<CORES;i++){
+		free(argThread[i].pop_th[0]);
+		free(argThread[i].pop_th);
+		free(argThread[i].best_th);
+		free(argThread[i].fo_th);
+	}
+	free(argThread);	
+}
+
+void cpy_best(){
+	int i,k;
+	
+	for(i=0;i<CORES;i++){
+		for(k = 0 ; k < DIM ; k++){
+			argThread[i].best_th[k]=best[k];
+		}
+		argThread[i].bestfo_th=bestfo;
+		argThread[i].best_index_th=best_index;
+	}
+}
+
+void cpy_slice_pointers(){
+	int i,j,k;
+
+	for(k=0;k<CORES;k++){ 
+		for(i=0;i<POP_SIZE;i++){
+			for(j=0;j<DIM;j++){
+				argThread[k].pop_th[i][j] = pop[i][j];
+			}	
+		}
+		for(i=0;i<POP_SIZE;i++){		
+			argThread[k].fo_th[i] = fo[i];
+		} 
 	}
 }
 
@@ -929,34 +1012,27 @@ void initPop(){
 	int i;	
 	int pedaco = ((double)POP_SIZE/(double)CORES); 
 	pthread_t *threads;
-	size_t stacksize;
 
 	threads = (pthread_t*)malloc(CORES*sizeof(pthread_t));
 	if(threads==NULL)exit(0);
-	argThread = (slice*)malloc(CORES*sizeof(slice));
-	if(threads==NULL)exit(0);
 
-	pthread_attr_init(&attr);
-    pthread_attr_getstacksize (&attr, &stacksize);	
-	stacksize = sizeof(double)*CORES+MEGEXTRA;
-	pthread_attr_setstacksize (&attr, stacksize);
-
-	for(i=0;i<CORES-1;i++){
+	for(i=0;i<CORES;i++){
 		argThread[i].tid = i;
 		argThread[i].inicio = i*pedaco;
-		argThread[i].fim = argThread[i].inicio+(pedaco-1);
+		if(i==CORES-1){
+			argThread[i].fim = POP_SIZE;
+		}else argThread[i].fim = argThread[i].inicio+(pedaco);
 		pthread_create(&threads[i], NULL, th_init_pop, (void *) (argThread+i));
 	}
-
-	argThread[CORES].tid = CORES;
-	argThread[CORES].inicio = (argThread[CORES-1].fim)+1;
-	argThread[CORES].fim = POP_SIZE;
-	pthread_create(&threads[i], NULL, th_init_pop, (void *) (argThread+CORES));
-
-
+		
+	for (i = 0; i < CORES; i++){
+    		pthread_join(threads[i], NULL);
+   	}
+   	
+   	free(threads);
 }
 
-void mutualism_phase(int index_i){
+void mutualism_phase(int index_i, double **pop_th, double *best_th, double *fo_th){
 	int i;
 	int bf1=0,bf2=0;	
 	double *mutual;
@@ -973,17 +1049,19 @@ void mutualism_phase(int index_i){
 	new_x_i = (double*)malloc(DIM*sizeof(double));
 	new_x_j = (double*)malloc(DIM*sizeof(double));	
 	mutual = (double*)malloc(DIM*sizeof(double));
+
 	
 	bf1=(int)randon(1,2.5);//benefit factor1
 	bf2=(int)randon(1,2.5);//benefit factor2
 	for(i=0;i<DIM;i++){
 		array_rand[i]=randon(0,1);
 	}
+	
 	//cáculo Eqs(1) (2) (3)
 	for(i=0;i<DIM;i++){
-		mutual[i]=(pop[index_i][i]+pop[index_j][i])/2;
-		new_x_i[i]=pop[index_i][i]+(array_rand[i]*(best[i]-(mutual[i]*bf1)));
-		new_x_j[i]=pop[index_j][i]+(array_rand[i]*(best[i]-(mutual[i]*bf2)));
+		mutual[i]=(pop_th[index_i][i]+pop_th[index_j][i])/2;
+		new_x_i[i]=pop_th[index_i][i]+(array_rand[i]*(best_th[i]-(mutual[i]*bf1)));
+		new_x_j[i]=pop_th[index_j][i]+(array_rand[i]*(best_th[i]-(mutual[i]*bf2)));
 		if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
 			if(new_x_i[i]>ub[0])new_x_i[i]=ub[0];
 			if(new_x_j[i]>ub[0])new_x_j[i]=ub[0];
@@ -998,20 +1076,24 @@ void mutualism_phase(int index_i){
 	}
 	//
 	newfo_i=objfunc(new_x_i, 0);//calculates fitness for new_x_i
-	newfo_j=objfunc(new_x_i, 0);//calculates fitness for new_x_j
+	if(newfo_i<0)
+				printf("%g\n",newfo_i);
+	newfo_j=objfunc(new_x_j, 0);//calculates fitness for new_x_j
+	if(newfo_j<0)
+				printf("%g\n",newfo_j);
 
-	if(fo[index_i]>=newfo_i){//greedy selection for xi
+	if(fo_th[index_i]>=newfo_i){//greedy selection for xi
 		for(i=0;i<DIM;i++){
-			pop[index_i][i]=new_x_i[i];
+			pop_th[index_i][i]=new_x_i[i];
 		}
-		fo[index_i]=newfo_i;
+		fo_th[index_i] = newfo_i;
 	}
 
-	if(fo[index_j]>=newfo_j){//greedy selection for xj
+	if(fo_th[index_j]>=newfo_j){//greedy selection for xj
 		for(i=0;i<DIM;i++){
-			pop[index_j][i]=new_x_j[i];
+			pop_th[index_j][i]=new_x_j[i];
 		}
-		fo[index_j]=newfo_j;
+		fo_th[index_j]=newfo_j;
 	}
 
 	free(array_rand);
@@ -1020,7 +1102,7 @@ void mutualism_phase(int index_i){
 	free(mutual);		
 }
 
-void commensalism_phase(int index_i){
+void commensalism_phase(int index_i, double **pop_th, double *best_th, double *fo_th){
 	int i;
 	double *array_rand;
 	int index_j=index_i;
@@ -1039,7 +1121,7 @@ void commensalism_phase(int index_i){
 	//puts values for array_rand and new_x_i
 	for(i=0;i<DIM;i++){
 		array_rand[i]=randon(-1,1);
-		new_x_i[i]=pop[index_i][i]+(array_rand[i]*(best[i]-pop[index_j][i]));
+		new_x_i[i]=pop_th[index_i][i]+(array_rand[i]*(best_th[i]-pop_th[index_j][i]));
 		if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
 			if(new_x_i[i]<lb[0])new_x_i[i]=lb[0];
 			if(new_x_i[i]>ub[0])new_x_i[i]=ub[0];
@@ -1051,17 +1133,17 @@ void commensalism_phase(int index_i){
 
 	newfo_i=objfunc(new_x_i, 0);//calculates fitness for new_x_i
 
-	if(fo[index_i]>=newfo_i){////greedy selection for xi
+	if(fo_th[index_i]>=newfo_i){////greedy selection for xi
 		for(i=0;i<DIM;i++){
-			pop[index_i][i]=new_x_i[i];
+			pop_th[index_i][i]=new_x_i[i];
 		}
-		fo[index_i]=newfo_i;
+		fo_th[index_i]=newfo_i;
 	}
 	free(array_rand);
 	free(new_x_i);	
 }
 
-void parasitism_phase(int index_i){
+void parasitism_phase(int index_i, double **pop_th, double *fo_th){
 	double *parasite;
 	double parasite_fo;
 	int pick;
@@ -1072,7 +1154,7 @@ void parasitism_phase(int index_i){
 	pick=(int)randon(0,DIM);//chooses the DIMension for change
 	
 	for(i=0;i<DIM;i++){//copies xi for parasite
-		parasite[i]=pop[index_i][i];
+		parasite[i]=pop_th[index_i][i];
 	}
 
 	while(index_j==index_i){
@@ -1085,11 +1167,11 @@ void parasitism_phase(int index_i){
 	}
 	parasite_fo=objfunc(parasite, 0);//calculates fitness for parasite
 	
-	if(fo[index_j]>=parasite_fo){//greedy selection between xj and parasite
+	if(fo_th[index_j]>=parasite_fo){//greedy selection between xj and parasite
 		for(i=0;i<DIM;i++){
-			pop[index_j][i]=parasite[i];
+			pop_th[index_j][i]=parasite[i];
 		}
-		fo[index_j]=parasite_fo;
+		fo_th[index_j]=parasite_fo;
 	}
 	free(parasite);	
 }
@@ -1139,7 +1221,7 @@ void plot(FILE *shellComands, char *run){
 		fprintf(shellComands,"	set title \"SOS Analysis\"\n");
 		fprintf(shellComands,"	set xlabel \"Itera\303\247\303\265es\"\n");
 		fprintf(shellComands,"	set ylabel \"Fo\" \n");
-		fprintf(shellComands,"	plot \"dadosplot//dadosplot%s.txt\" using 1:3 title \"Media Fo\" w lines , \"dadosplot//dadosplot%s.txt\" using 1:2 title \"Best_Fo\" w lines",run,run);
+		fprintf(shellComands,"	plot \"dadosplot//dadosplot%s.txt\" using 1:3 title \"Media Fo\" w lines , \"dadosplot//dadosplot%s.txt\" using 1:2 title \"best_thFo\" w lines",run,run);
 		pclose(shellComands); 	
 	}
 }
@@ -1227,11 +1309,19 @@ int ffscanf(char *fieldname, FILE *fp, char *format, void *inbuffer){
 
 void AllocArrays(){
 	int j;
-	int constn=0;
+	//int constn=0;
 
-	pop = (double**)malloc (POP_SIZE*sizeof(double*));
+	argThread = (slice*)malloc(CORES*sizeof(slice));
+	if(argThread==NULL)exit(0);
+
+	alloc_slice_pointers();
+
+	pop = (double**)malloc(POP_SIZE*sizeof(double*));
+		double *dados = (double*)malloc(sizeof(double)*DIM*POP_SIZE);	
         for (j = 0;j < POP_SIZE; j++)
-		pop[j] = (double*)malloc (DIM * sizeof(double));
+			pop[j] = &dados[j*DIM];
+
+	//printf("Passou\n");
 
 	fo = (double*)malloc (POP_SIZE*sizeof(double));
 
@@ -1239,47 +1329,4 @@ void AllocArrays(){
 
 	ub=(double*)malloc (DIM*sizeof(double));
 	lb=(double*)malloc (DIM*sizeof(double));
-
-	switch(FUNCTION){
-		case 9:
-			y=(double*)malloc(sizeof(double));
-			c=(double*)malloc(sizeof(double));
-			break;
-		case 10:
-			constn=2;
-			y=(double*)malloc(constn*sizeof(double));
-			c=(double*)malloc(constn*sizeof(double));
-			break;
-		case 11:
-			constn=7;
-			y=(double*)malloc(constn*sizeof(double));
-			c=(double*)malloc(constn*sizeof(double));
-			break;
-		case 12: //Pressure Vessel
-			constn=4;
-			y=(double*)malloc(constn*sizeof(double));
-			c=(double*)malloc(constn*sizeof(double));
-			break;
-		case 13: //Tension/compression string
-			constn=4;
-			y=(double*)malloc(constn*sizeof(double));
-			c=(double*)malloc(constn*sizeof(double));
-			break;
-		case 14: // Speed Reducer(Gear Train)
-			constn=11;
-			y=(double*)malloc(constn*sizeof(double));
-			c=(double*)malloc(constn*sizeof(double));
-			break;
-		case 15: // 10-Bar Truss
-			constn=21;
-			y=(double*)malloc(constn*sizeof(double));
-			c=(double*)malloc(constn*sizeof(double));
-			break;
-		/*case 16: // Heat Exchanger Design
-			constn=6;
-			y=(double*)malloc(constn*sizeof(double));
-			c=(double*)malloc(constn*sizeof(double));
-			break;*/
-	}
-
 }

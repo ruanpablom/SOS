@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <math.h>
 #include <time.h>
 #include "mersenne.h"
@@ -34,6 +35,31 @@ int main(int argc, char **argv){
 	double *mediaM;
 	FILE *file;
 	FILE *shellComands;
+
+	switch(FUNCTION){
+		case 9:
+			rest=1;
+			break;
+		case 10:
+			rest=2;
+			break;
+		case 11:
+			rest=7;
+			break;
+		case 12: //Pressure Vessel
+			rest=4;
+			break;
+		case 13: //Tension/compression string
+			rest=4;
+			break;
+		case 14: // Speed Reducer(Gear Train)
+			rest=11;
+			break;
+		case 15: // 10-Bar Truss
+			rest=21;
+			break;
+	}
+
 	
 
 	//refresh the folder of plotting
@@ -66,24 +92,29 @@ int main(int argc, char **argv){
 
 	for (r=0;r<RUN;r++){	
 		//Init population
+		//printf("Passou!\n");
 		initPop();
-
-
-
+		/*for(i = 0 ; i < POP_SIZE ; i++){
+			for(k = 0 ; k < DIM ; k++){
+				printf("%g ",pop[i][k]);
+			}
+			printf("\n");
+		}
+		printf("\n");*/
 		bestfo = 10000000;
 		for(i=0;i<POP_SIZE;i++){
 			//printf("\n\n%g %i\n",bestfo,best_index);
 			fo[i] = objfunc(pop[i], 0);
-			if(fo[i]<=bestfo && fo[i]>0){
+			if(fo[i]<=bestfo){
 				best_index=i;
 				bestfo=fo[i];
 			}
-			//printf("%g\n",fo[i]);
+			//if(fo[i]<0)
+				//printf("%g\n",fo[i]);
 		}
-		
 
 		for(i=0;i<DIM;i++)best[i]=pop[best_index][i];
-
+	
 		num_fit_eval=0;
 		num_iter=0;
 		mediafo=0;
@@ -100,6 +131,7 @@ int main(int argc, char **argv){
 		while(num_iter<MAX_ITER){
 			num_iter++;
 			sos_iter();
+			//printf("%g\n",bestfo);
 			for(i=0;i<POP_SIZE;i++){
 				mediafo+=fo[i];
 			}
@@ -113,8 +145,6 @@ int main(int argc, char **argv){
 			mediaM[num_iter]+=mediafo;//sum of all mediafo in the num_iter position
 			mediaBfo[num_iter]+=bestfo;//sum of all bestfo	in the num_iter position
 		}
-
-		
 		
 		//Loop de Iterações.
 	
@@ -143,6 +173,7 @@ int main(int argc, char **argv){
 		if(COND){
 			objfunc(best, 1);
 			//values of constraints
+			/*
 			switch(FUNCTION){
 				case 9: //Cantilever Beam
 					fprintf(file,"g1=%g ",y[0]);
@@ -263,11 +294,7 @@ int main(int argc, char **argv){
 					}
 					printf("\n");
 					break;
-				/*case 16: //Heat Exchanger Design 
-					fprintf(file,"g1=%g g2=%g g3=%g g4=%g g5=%g g6=%g g7=%g g8=%g\n",y[0],y[1],y[3],y[3],y[4],y[5],y[6],y[7]);
-					printf("g1=%g g2=%g g3=%g g4=%g g5=%g g6=%g g7=%g g8=%g\n",y[0],y[1],y[3],y[3],y[4],y[5],y[6],y[7]);
-					break;*/
-			}
+			}*/
 			//
 		}
 		printf("N_fit_eval:");
