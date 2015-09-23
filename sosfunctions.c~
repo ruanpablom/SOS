@@ -654,6 +654,7 @@ double constr(double *sol){//calculate penalization
 				}else{
 					y[i] = 0;
 				}
+				printf("Entrou\n");
 				pen += y[i];      
 			}
 			/*displacement constraint (2 in.)*/

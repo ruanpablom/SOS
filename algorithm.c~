@@ -35,6 +35,8 @@ int main(int argc, char **argv){
 	double *mediaM;
 	FILE *file;
 	FILE *shellComands;
+
+	printf("%i\n",rest);
 	
 	/*
 	//refresh the folder of plotting
@@ -71,6 +73,7 @@ int main(int argc, char **argv){
 			rest=11;
 			break;
 		case 15: // 10-Bar Truss
+			printf("Entrou\n");
 			rest=21;
 			break;
 	}
