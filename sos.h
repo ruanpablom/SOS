@@ -5,12 +5,9 @@ typedef struct{
 	int tid;
 	int inicio;
 	int fim;
-	double **pop_th;
 	double *best_th;
-	double *fo_th;
 	double bestfo_th;
 	int best_index_th;
-
 }slice;
 
 
@@ -63,6 +60,7 @@ void alloc_slice_pointers();
 void cpy_best();
 void cpy_slice_pointers();
 void join_pop();
+void join_best();
 void free_slice();
 
 #endif

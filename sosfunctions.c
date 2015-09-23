@@ -866,12 +866,14 @@ void *th_init_pop(void *argThread){
 			for (k=0; k<DIM;k++){ //each dimension of the individual
 				pop[j][k] = randon(lb[0],ub[0]);
 			}
+			fo[j] = objfunc(pop[j], 0);
 		}
 	}else{
 		for (j=s->inicio;j<s->fim;j++){//each individual
 			for (k=0; k<DIM;k++){ //each dimension of the individual
 				pop[j][k] = randon(lb[k],ub[k]);
 			}
+			fo[j] = objfunc(pop[j], 0);
 		}
 	}
 }
@@ -882,27 +884,29 @@ void *th_sos(void* argThread){
 
 	//printf("Thread %i criada\n",s->tid);
 	for(i=s->inicio;i<s->fim;i++){
-		//pthread_mutex_lock(&data_mutex);
-		mutualism_phase(i,s->pop_th,s->best_th,s->fo_th);
-		//pthread_mutex_unlock(&data_mutex);
+		pthread_mutex_lock(&data_mutex);
+		mutualism_phase(i,pop,best,fo);
+		pthread_mutex_unlock(&data_mutex);
 		num_fit_eval+=2;
-		//pthread_mutex_lock(&data_mutex);
-		commensalism_phase(i,s->pop_th, s->best_th, s->fo_th);
-		//pthread_mutex_unlock(&data_mutex);
+		pthread_mutex_lock(&data_mutex);
+		commensalism_phase(i,pop,best,fo);
+		pthread_mutex_unlock(&data_mutex);
 		num_fit_eval++;
-		//pthread_mutex_lock(&data_mutex);
-		parasitism_phase(i, s->pop_th, s->fo_th);
-		//pthread_mutex_unlock(&data_mutex);
+		pthread_mutex_lock(&data_mutex);
+		parasitism_phase(i,pop,fo);
+		pthread_mutex_unlock(&data_mutex);
 		num_fit_eval++;
-		//pthread_mutex_lock(&data_mutex);
 		for(k=0;k<POP_SIZE;k++){
-			if(s->fo_th[k] <= s->bestfo_th){
-				s->bestfo_th=s->fo_th[k];
+			pthread_mutex_lock(&data_mutex);
+			if(fo[k] <= s->bestfo_th){
+				s->bestfo_th=fo[k];
 				s->best_index_th=k;
 			}
+			pthread_mutex_unlock(&data_mutex);
 		}
-		for(k=0;k<DIM;k++)s->best_th[k]=s->pop_th[(s->best_index_th)][k];
-		//pthread_mutex_unlock(&data_mutex);
+		pthread_mutex_lock(&data_mutex);
+		for(k=0;k<DIM;k++)s->best_th[k]=pop[s->best_index_th][k];
+		pthread_mutex_unlock(&data_mutex);
 	}
 }
 
@@ -913,7 +917,7 @@ void sos_iter(){
 	threads = (pthread_t*)malloc(CORES*sizeof(pthread_t));
 	if(threads==NULL)exit(0);
 	
-	cpy_slice_pointers();
+	//cpy_slice_pointers();
 	cpy_best();
 
 	for (i = 0; i < CORES; ++i){
@@ -923,11 +927,11 @@ void sos_iter(){
 	for (i = 0; i < CORES; i++){
       	pthread_join(threads[i], NULL);
    	}
-   	join_pop();
+   	join_best();
    	free(threads);
 }
 
-void join_pop(){
+/*void join_pop(){
 	int i,j;
 	int index_m = 0;
 	int ib=0;
@@ -1006,7 +1010,44 @@ void cpy_slice_pointers(){
 			argThread[k].fo_th[i] = fo[i];
 		} 
 	}
+}*/
+
+void alloc_slice_pointers(){
+	int i;
+	for(i=0;i<CORES;i++){
+		argThread[i].best_th = (double*)malloc(DIM*sizeof(double));
+		if(argThread[i].best_th==NULL)exit(0);
+	}	
 }
+
+void join_best(){
+	int i,j;
+	int ib=0;
+	for(i=0;i<CORES;i++){
+		if(argThread[i].bestfo_th < argThread[ib].bestfo_th && argThread[i].bestfo_th > 0) ib = i;
+	}
+	bestfo = argThread[ib].bestfo_th;
+	best_index = argThread[ib].best_index_th;
+	for(j=0;j<DIM;j++){
+		best[j] = argThread[ib].best_th[j];
+	}
+}
+
+void cpy_best(){
+	int i,k;
+	for(i=0;i<CORES;i++){
+		for(k = 0 ; k < DIM ; k++){
+			argThread[i].best_th[k]=best[k];
+		}
+		argThread[i].bestfo_th=bestfo;
+		argThread[i].best_index_th=best_index;
+	}
+}
+
+void free_slice(){
+	free(argThread);	
+}
+
 
 void initPop(){
 	int i;	
@@ -1313,8 +1354,9 @@ void AllocArrays(){
 
 	argThread = (slice*)malloc(CORES*sizeof(slice));
 	if(argThread==NULL)exit(0);
-
 	alloc_slice_pointers();
+
+	//alloc_slice_pointers();
 
 	pop = (double**)malloc(POP_SIZE*sizeof(double*));
 		double *dados = (double*)malloc(sizeof(double)*DIM*POP_SIZE);	

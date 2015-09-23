@@ -61,13 +61,13 @@ int main(int argc, char **argv){
 	}
 
 	
-
+	/*
 	//refresh the folder of plotting
 	shellComands = popen ("rm dadosplot// -R", "w");
 	pclose(shellComands);
 	shellComands = popen ("mkdir dadosplot", "w");
 	pclose(shellComands);
-	//
+	//*/
 
 	srand(time(NULL));
 
@@ -92,33 +92,22 @@ int main(int argc, char **argv){
 
 	for (r=0;r<RUN;r++){	
 		//Init population
-		//printf("Passou!\n");
 		initPop();
-		/*for(i = 0 ; i < POP_SIZE ; i++){
-			for(k = 0 ; k < DIM ; k++){
-				printf("%g ",pop[i][k]);
-			}
-			printf("\n");
-		}
-		printf("\n");*/
 		bestfo = 10000000;
+		
 		for(i=0;i<POP_SIZE;i++){
-			//printf("\n\n%g %i\n",bestfo,best_index);
-			fo[i] = objfunc(pop[i], 0);
+			//fo[i] = objfunc(pop[i], 0);
 			if(fo[i]<=bestfo){
 				best_index=i;
 				bestfo=fo[i];
 			}
-			//if(fo[i]<0)
-				//printf("%g\n",fo[i]);
 		}
-
 		for(i=0;i<DIM;i++)best[i]=pop[best_index][i];
 	
 		num_fit_eval=0;
 		num_iter=0;
 		mediafo=0;
-		strcpy(str,"dadosplot//dadosplot");
+		/*strcpy(str,"dadosplot//dadosplot");
 		converteDecChar(strf,r);
 		strcat(strf,".txt");
 		strcat(str,strf);
@@ -127,53 +116,52 @@ int main(int argc, char **argv){
     	   	exit(1);
     	}
 		fprintf(file,"%s %14s %15s\n","#ITER","#BEST_FO","#MEDIA_FO");
-		fclose(file);
+		fclose(file);*/
 		while(num_iter<MAX_ITER){
 			num_iter++;
 			sos_iter();
-			//printf("%g\n",bestfo);
 			for(i=0;i<POP_SIZE;i++){
 				mediafo+=fo[i];
 			}
-			mediafo=mediafo/POP_SIZE;
+			mediafo=mediafo/POP_SIZE;/*
 			if((file = fopen(str,"a")) == NULL){
        			printf("Erro ao abrir arquivo!!!\n\n");
         		exit(1);
       		}
 			fprintf(file,"%i%18g%15g\n",num_iter,bestfo,mediafo);
-			fclose(file);
+			fclose(file);*/
 			mediaM[num_iter]+=mediafo;//sum of all mediafo in the num_iter position
 			mediaBfo[num_iter]+=bestfo;//sum of all bestfo	in the num_iter position
 		}
 		
 		//Loop de Iterações.
-	
+		/*
 		if((file = fopen("dadosplot//exec.txt","a")) == NULL){
        		printf("Erro ao abrir arquivo!!!\n\n");
        		exit(1);
-      	}
+      	}*/
 		printf("RUN: %d\n",r);
-		fprintf(file,"RUN: %d\n",r);
+		//fprintf(file,"RUN: %d\n",r);
 		printf("Best solution: ");
-		fprintf(file,"Best solution: ");
+		//fprintf(file,"Best solution: ");
 		for (k=0; k<DIM;k++){//variables
 			printf("%g ",best[k]);
-			fprintf(file,"%g ",best[k]);
+			//fprintf(file,"%g ",best[k]);
 		}
 		printf(" Fo:");
-		fprintf(file," Fo:");
+		//fprintf(file," Fo:");
 		printf("%g \n",bestfo);
-		fprintf(file,"%g \n",bestfoRUN);
+		//fprintf(file,"%g \n",bestfoRUN);
 		if(r==0)bestfoRUN=bestfo;
 		bestfoRUN=min(bestfo, bestfoRUN);
 		printf("MIN: %g\n",bestfoRUN);
 		printf("bestfo: %g\n", bestfo);
 		printf("bestfoRUN: %g\n", bestfoRUN);
 	
-		if(COND){
+		/*if(COND){
 			objfunc(best, 1);
 			//values of constraints
-			/*
+			
 			switch(FUNCTION){
 				case 9: //Cantilever Beam
 					fprintf(file,"g1=%g ",y[0]);
@@ -294,21 +282,21 @@ int main(int argc, char **argv){
 					}
 					printf("\n");
 					break;
-			}*/
+			}
 			//
-		}
+		}*/
 		printf("N_fit_eval:");
-		fprintf(file,"N_fit_eval:");
+		//fprintf(file,"N_fit_eval:");
 		printf("%i \n\n",num_fit_eval);
-		fprintf(file, "%i \n\n",num_fit_eval);
-		fclose(file);
+		//fprintf(file, "%i \n\n",num_fit_eval);
+		//fclose(file);
 		//
 		if(constr(best)==0)var[r]=bestfo;
 		else var[r]=2147483646;
-
+		/*
 		strf[((strchr(strf,'.'))-strf)]='\0';
 		plot(shellComands,strf);//plotting for each run
-		
+		*/
 	}//end FOR RUN
 	bestfo=var[0];
 	best_index=0;
@@ -317,7 +305,7 @@ int main(int argc, char **argv){
 			bestfo=var[i];
 			best_index=i;
 		}
-	}
+	}/*
 	if((file = fopen("dadosplot//dadosplotFinal.txt","a")) == NULL){
         printf("Erro ao abrir arquivo!!!\n\n");
         exit(1);
@@ -334,29 +322,29 @@ int main(int argc, char **argv){
        	printf("Erro ao abrir arquivo!!!\n\n");
        	exit(1);
     }
-	
+	*/
 	int nfeasible = AvgStdDev(&avg,&stdDev,var);
 	printf("====================\n");
-	fprintf(file,"====================\n");
+	//fprintf(file,"====================\n");
 	printf("Best Fo: ");
-	fprintf(file,"Best Fo: ");
+	//fprintf(file,"Best Fo: ");
 	printf("%g\n",bestfoRUN);
-	fprintf(file,"%g\n",bestfoRUN);
+	//fprintf(file,"%g\n",bestfoRUN);
 	printf("Avg: ");
-	fprintf(file,"Avg: ");
+	//fprintf(file,"Avg: ");
 	printf("%g\n",avg);
-	fprintf(file,"%g\n",avg);
+	//fprintf(file,"%g\n",avg);
 	printf("StdDev: ");
-	fprintf(file,"StdDev: ");
+	//fprintf(file,"StdDev: ");
 	printf("%g\n",stdDev);
-	fprintf(file, "%g\n",stdDev);
+	//fprintf(file, "%g\n",stdDev);
 	printf("Feasible: ");
-	fprintf(file,"Feasible: ");
+	//fprintf(file,"Feasible: ");
 	printf("%i\n",nfeasible);
-	fprintf(file, "%i\n",nfeasible);
+	//fprintf(file, "%i\n",nfeasible);
 	printf("====================\n");
-	fprintf(file,"====================\n");
-	fclose(file);
+	//fprintf(file,"====================\n");
+	//fclose(file);
 	freeArrays(POP_SIZE, pop, fo, best, ub, lb, y, c);
 	
 	return 0;
