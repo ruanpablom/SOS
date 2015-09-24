@@ -5,9 +5,6 @@ typedef struct{
 	int tid;
 	int inicio;
 	int fim;
-	//double *best_th;
-	//double bestfo_th;
-	//int best_index_th;
 }slice;
 
 
@@ -29,7 +26,6 @@ double *best;//[DIM];           //best solution found
 double bestfo;//best fo value
 int best_index;//index for the best solution
 double *c_f; //constraint functions
-double *c; //penallity function constant
 int rest;
 int num_fit_eval;
 int num_iter;
@@ -47,6 +43,7 @@ void prepararObjFunc();
 double constr(double *sol, int cond);
 double objfunc(double *sol, int cond);
 void *th_init_pop(void *arg);
+void *th_sos(void* argThread);
 void initPop();
 void mutualism_phase(int index_i, double **pop_, double *best_, double *fo_);
 void commensalism_phase(int index_i, double **pop_, double *best_, double *fo);
@@ -57,10 +54,7 @@ char *converteDecChar(char *strf, int dec);
 int ffscanf(char *fieldname, FILE *fp, char *format, void *inbuffer);
 void sos_iter();
 void alloc_slice_pointers();
-void cpy_best();
-void cpy_slice_pointers();
-void join_pop();
-void join_best();
 void free_slice();
+void showConst(double *var, int r, FILE *file);
 
 #endif

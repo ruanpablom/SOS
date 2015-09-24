@@ -36,7 +36,6 @@ int main(int argc, char **argv){
 	FILE *file;
 	FILE *shellComands;
 	
-	
 	//refresh the folder of plotting
 	shellComands = popen ("rm dadosplot// -R", "w");
 	pclose(shellComands);
@@ -155,135 +154,11 @@ int main(int argc, char **argv){
 		printf("MIN: %g\n",bestfoRUN);
 		printf("bestfo: %g\n", bestfo);
 		printf("bestfoRUN: %g\n", bestfoRUN);
+
+		showConst(var,r,file);
+
+		
 	
-		if(COND){
-			if(constr(best,1)==0)var[r]=bestfo;
-			else var[r]=2147483646;
-			//values of constraints
-			
-			switch(FUNCTION){
-				case 9: //Cantilever Beam
-					fprintf(file,"g1=%g ",c_f[0]);
-					if(c_f[0]>1) fprintf(file, "Fail\n");
-					else fprintf(file, "Ok\n");
-					printf("g1=%g ",c_f[0]);
-					if(c_f[0]>1)printf("Fail\n");
-					else printf("Ok\n");
-					break;
-				case 10: //I-Beam vertical deflection 
-					fprintf(file, "g1=%g ",c_f[0]);
-					if(c_f[0]>300) fprintf(file, "Fail ");
-					else fprintf(file, "Ok ");
-					fprintf(file, "g2=%g ",c_f[1]);
-					if(c_f[1]>56) fprintf(file, "Fail\n");
-					else fprintf(file, "Ok\n");
-					printf("g1=%g ",c_f[0]);
-					if(c_f[0]>300) printf("Fail ");
-					else printf("Ok ");
-					printf("g2=%g ",c_f[1]);
-					if(c_f[1]>56) printf("Fail\n");
-					else printf("Ok\n");
-					break;
-				case 11: //Welded Beam 
-					fprintf(file,"g1=%g ",c_f[0]);fprintf(file,"g1=%g ",c_f[0]);
-					if(c_f[0]>0) fprintf(file, "Fail ");
-					else fprintf(file, "Ok ");
-					fprintf(file,"g2=%g ",c_f[1]);
-					if(c_f[1]>0) fprintf(file, "Fail ");
-					else fprintf(file, "Ok ");
-					fprintf(file,"g3=%g ",c_f[2]);
-					if(c_f[2]>0) fprintf(file, "Fail ");
-					else fprintf(file, "Ok ");
-					fprintf(file,"g4=%g ",c_f[3]);
-					if(c_f[3]>0) fprintf(file, "Fail ");
-					else fprintf(file, "Ok ");
-					fprintf(file,"g5=%g ",c_f[4]);
-					if(c_f[4]>0) fprintf(file, "Fail ");
-					else fprintf(file, "Ok ");
-					fprintf(file,"g6=%g ",c_f[5]);
-					if(c_f[5]>0) fprintf(file, "Fail ");
-					else fprintf(file, "Ok ");
-					fprintf(file,"g7=%g ",c_f[6]);
-					if(c_f[6]>0) fprintf(file, "Fail\n");
-					else fprintf(file, "Ok\n");
-
-					printf("g1=%g ",c_f[0]);
-					if(c_f[0]>0) printf("Fail ");
-					else printf("Ok ");
-					printf("g2=%g ",c_f[1]);
-					if(c_f[1]>0) printf("Fail ");
-					else printf("Ok ");
-					printf("g3=%g ",c_f[2]);
-					if(c_f[2]>0) printf("Fail ");
-					else printf("Ok ");
-					printf("g4=%g ",c_f[3]);
-					if(c_f[3]>0) printf("Fail ");
-					else printf("Ok ");
-					printf("g5=%g ",c_f[4]);
-					if(c_f[4]>0) printf("Fail ");
-					else printf("Ok ");
-					printf("g6=%g ",c_f[5]);
-					if(c_f[5]>0) printf("Fail ");
-					else printf("Ok ");
-					printf("g7=%g ",c_f[6]);
-					if(c_f[6]>0) printf("Fail\n");
-					else printf("Ok\n");
-					break;
-				case 12: //Pressure Vessel 
-					fprintf(file,"g1=%g ",c_f[0]);
-					if(c_f[0]>0) fprintf(file, "Fail ");
-					else fprintf(file, "Ok ");
-					fprintf(file,"g2=%g ",c_f[1]);
-					if(c_f[1]>0) fprintf(file, "Fail ");
-					else fprintf(file, "Ok ");
-					fprintf(file,"g3=%g ",c_f[2]);
-					if(c_f[2]>0) fprintf(file, "Fail ");
-					else fprintf(file, "Ok ");
-					fprintf(file,"g4=%g ",c_f[3]);
-					if(c_f[3]>0) fprintf(file, "Fail\n");
-					else fprintf(file, "Ok\n");
-
-					printf("g1=%g ",c_f[0]);
-					if(c_f[0]>0) printf("Fail ");
-					else printf("Ok ");
-					printf("g2=%g ",c_f[1]);
-					if(c_f[1]>0) printf("Fail ");
-					else printf("Ok ");
-					printf("g3=%g ",c_f[2]);
-					if(c_f[2]>0) printf("Fail ");
-					else printf("Ok ");
-					printf("g4=%g ",c_f[3]);
-					if(c_f[3]>0) printf("Fail\n");
-					else printf("Ok\n");
-					break;
-				case 13: //Tension/compression string
-					fprintf(file,"g1=%g g2=%g g3=%g g4=%g\n",c_f[0],c_f[1],c_f[3],c_f[3]);
-					printf("g1=%g g2=%g g3=%g g4=%g\n",c_f[0],c_f[1],c_f[3],c_f[3]);
-					break;
-				case 14: //Speed Reducer(Gear Train)
-					fprintf(file,"g1=%g g2=%g g3=%g g4=%g g5=%g g6=%g g7=%g g8=%g g9=%g g10=%g g11=%g\n",c_f[0],c_f[1],c_f[3],c_f[3],c_f[4],c_f[5],c_f[6],c_f[7],c_f[8],c_f[9],c_f[10]);
-					printf("g1=%g g2=%g g3=%g g4=%g g5=%g g6=%g g7=%g g8=%g g9=%g g10=%g g11=%g\n",c_f[0],c_f[1],c_f[3],c_f[3],c_f[4],c_f[5],c_f[6],c_f[7],c_f[8],c_f[9],c_f[10]);
-					break;
-				case 15: //10-Bar-Truss
-					printf("Stress Violation: ");
-					for(i=0;i<10;i++){
-						printf("g(%i)=%g ",i+1, c_f[i]);
-					}
-					printf("\n");
-					printf("DispX: ");
-					for(i=10;i<16;i++){
-						printf("g(%i)=%g ",i+1, c_f[i]);
-					}
-					printf("\n");
-					printf("DispY: ");
-					for(i=16;i<22;i++){
-						printf("g(%i)=%g ",i+1,c_f[i]);
-					}
-					printf("\n");
-					break;
-			}
-			//
-		}
 		printf("N_fit_eval:");
 		fprintf(file,"N_fit_eval:");
 		printf("%i \n\n",num_fit_eval);

@@ -10,10 +10,9 @@
 
 #define FAIL 0
 #define PIII 3.14159265359
-#define MEGEXTRA 1000000
+#define COND FUNCTION==9 || FUNCTION==10 || FUNCTION==11 || FUNCTION==12 || FUNCTION==13 || FUNCTION==14 || FUNCTION==15
 
 pthread_mutex_t data_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_attr_t attr;
 
 double randon( double inferior, double superior){
 	double aux = (float)inferior + ((superior - inferior)*rand()/(RAND_MAX+1.0));
@@ -21,14 +20,10 @@ double randon( double inferior, double superior){
 }
 
 void freeArrays(){
-	//int i;
 	free(fo);
 	free(best);
 	free(lb);
 	free(ub);
-	/*for (i = 0; i < POP_SIZE; i++){
-		free(pop[i]);
-	}*/
 	free(pop[0]);	
 	free(pop);
 	free_slice();
@@ -108,9 +103,6 @@ void showParameters(){
 		case 15:
 			printf("FUNCTION = %s\n","10-bar truss");
 			break;
-		/*case 16:
-			printf("FUNCTION = %s\n","Heat Exchanger Design");
-			break;*/
 	}
 	printf("****************\n");
 }
@@ -231,24 +223,6 @@ void prepararObjFunc(){
 			lb[0] = 0.10;
 			ub[0] = 35.00;
 			break;
-		/*case 16:
-			lb[0] = 100;
-			ub[0] = 10000;
-			lb[1] = 1000;
-			ub[1] = 10000;
-			lb[2] = 1000;
-			ub[2] = 10000;
-			lb[3] = 10;
-			ub[3] = 1000;
-			lb[4] = 10;
-			ub[4] = 1000;
-			lb[5] = 10;
-			ub[5] = 1000;
-			lb[6] = 10;
-			ub[6] = 1000;
-			lb[7] = 10;
-			ub[7] = 1000;
-			break;*/
     	default:
     	    printf("Info: Invalid function\n") ;
     	    exit(0);
@@ -675,33 +649,6 @@ double constr(double *sol, int cond){//calculate penalization
 			pen *=P;
 			free(area);
 			break;
-		/*case 16:
-			ll=0;
-			y[0]=0.0025*(sol[3]+sol[5])-1;
-			if(y[0]>0){
-				pen+=ll*y[0];
-			}
-			y[1]=0.0025*(-sol[3]+sol[4]+sol[6])-1;
-			if(y[0]>0){
-				pen+=ll*y[1];
-			}
-			y[2]=0.01*(-sol[4]+sol[7])-1;
-			if(y[0]>0){
-				pen+=ll*y[2];
-			}
-			y[3]=100*sol[0]-sol[0]*sol[5]+833.33252*sol[3]-83333.333;
-			if(y[0]>0){
-				pen+=ll*y[3];
-			}
-			y[4]=sol[1]*sol[3]-sol[1]*sol[6]-1250*sol[3]+1250*sol[4];
-			if(y[0]>0){
-				pen+=ll*y[4];
-			}
-			y[5]=sol[2]*sol[4]-sol[2]*sol[7]-2500*sol[4]+1250000;
-			if(y[0]>0){
-				pen+=ll*y[5];
-			}
-			break;*/
 	}
 	if(cond) memcpy(c_f,y,rest*sizeof(double));
 	return pen;
@@ -713,9 +660,6 @@ double objfunc(double *sol, int cond){
     double top = 0.00 , top1 = 0.00, top2 = 0.00;
     double aux = 0.0;
     double aux1 = 0.0;
-    //double pen=0;
-    //for(i=0;i<DIM;i++) printf("%g ",sol[i]);
-    //printf("\n");	
     double somF = 0.;
     double ro = 0.1;
 	double *area;
@@ -848,10 +792,6 @@ double objfunc(double *sol, int cond){
 		}
 		
 		return somF+top;
-	
-	/*case 16: //Heat Exchanger Design
-		top=constr(sol);
-		return (sol[0]+sol[1]+sol[2])+top;*/
 	default:
         printf("Info: Invalid function..\n") ;
         exit(0);
@@ -883,7 +823,6 @@ void *th_sos(void* argThread){
 	int i,k;
 	slice *s = (slice*)argThread;
 
-	//printf("Thread %i criada\n",s->tid);
 	for(i=s->inicio;i<s->fim;i++){
 		mutualism_phase(i,pop,best,fo);
 		num_fit_eval+=2;
@@ -903,6 +842,151 @@ void *th_sos(void* argThread){
 	}
 }
 
+void showConst(double *var, int r, FILE *file){
+	int i;
+	if(COND){
+		if(constr(best,1)==0)var[r]=bestfo;
+		else var[r]=2147483646;
+		//values of constraints
+		
+		switch(FUNCTION){
+			case 9: //Cantilever Beam
+				fprintf(file,"g1=%g ",c_f[0]);
+				if(c_f[0]>1) fprintf(file, "Fail\n");
+				else fprintf(file, "Ok\n");
+				printf("g1=%g ",c_f[0]);
+				if(c_f[0]>1)printf("Fail\n");
+				else printf("Ok\n");
+				break;
+			case 10: //I-Beam vertical deflection 
+				fprintf(file, "g1=%g ",c_f[0]);
+				if(c_f[0]>300) fprintf(file, "Fail ");
+				else fprintf(file, "Ok ");
+				fprintf(file, "g2=%g ",c_f[1]);
+				if(c_f[1]>56) fprintf(file, "Fail\n");
+				else fprintf(file, "Ok\n");
+				printf("g1=%g ",c_f[0]);
+				if(c_f[0]>300) printf("Fail ");
+				else printf("Ok ");
+				printf("g2=%g ",c_f[1]);
+				if(c_f[1]>56) printf("Fail\n");
+				else printf("Ok\n");
+				break;
+			case 11: //Welded Beam 
+				fprintf(file,"g1=%g ",c_f[0]);fprintf(file,"g1=%g ",c_f[0]);
+				if(c_f[0]>0) fprintf(file, "Fail ");
+				else fprintf(file, "Ok ");
+				fprintf(file,"g2=%g ",c_f[1]);
+				if(c_f[1]>0) fprintf(file, "Fail ");
+				else fprintf(file, "Ok ");
+				fprintf(file,"g3=%g ",c_f[2]);
+				if(c_f[2]>0) fprintf(file, "Fail ");
+				else fprintf(file, "Ok ");
+				fprintf(file,"g4=%g ",c_f[3]);
+				if(c_f[3]>0) fprintf(file, "Fail ");
+				else fprintf(file, "Ok ");
+				fprintf(file,"g5=%g ",c_f[4]);
+				if(c_f[4]>0) fprintf(file, "Fail ");
+				else fprintf(file, "Ok ");
+				fprintf(file,"g6=%g ",c_f[5]);
+				if(c_f[5]>0) fprintf(file, "Fail ");
+				else fprintf(file, "Ok ");
+				fprintf(file,"g7=%g ",c_f[6]);
+				if(c_f[6]>0) fprintf(file, "Fail\n");
+				else fprintf(file, "Ok\n");
+				printf("g1=%g ",c_f[0]);
+				if(c_f[0]>0) printf("Fail ");
+				else printf("Ok ");
+				printf("g2=%g ",c_f[1]);
+				if(c_f[1]>0) printf("Fail ");
+				else printf("Ok ");
+				printf("g3=%g ",c_f[2]);
+				if(c_f[2]>0) printf("Fail ");
+				else printf("Ok ");
+				printf("g4=%g ",c_f[3]);
+				if(c_f[3]>0) printf("Fail ");
+				else printf("Ok ");
+				printf("g5=%g ",c_f[4]);
+				if(c_f[4]>0) printf("Fail ");
+				else printf("Ok ");
+				printf("g6=%g ",c_f[5]);
+				if(c_f[5]>0) printf("Fail ");
+				else printf("Ok ");
+				printf("g7=%g ",c_f[6]);
+				if(c_f[6]>0) printf("Fail\n");
+				else printf("Ok\n");
+				break;
+			case 12: //Pressure Vessel 
+				fprintf(file,"g1=%g ",c_f[0]);
+				if(c_f[0]>0) fprintf(file, "Fail ");
+				else fprintf(file, "Ok ");
+				fprintf(file,"g2=%g ",c_f[1]);
+				if(c_f[1]>0) fprintf(file, "Fail ");
+				else fprintf(file, "Ok ");
+				fprintf(file,"g3=%g ",c_f[2]);
+				if(c_f[2]>0) fprintf(file, "Fail ");
+				else fprintf(file, "Ok ");
+				fprintf(file,"g4=%g ",c_f[3]);
+				if(c_f[3]>0) fprintf(file, "Fail\n");
+				else fprintf(file, "Ok\n");
+				printf("g1=%g ",c_f[0]);
+				if(c_f[0]>0) printf("Fail ");
+				else printf("Ok ");
+				printf("g2=%g ",c_f[1]);
+				if(c_f[1]>0) printf("Fail ");
+				else printf("Ok ");
+				printf("g3=%g ",c_f[2]);
+				if(c_f[2]>0) printf("Fail ");
+				else printf("Ok ");
+				printf("g4=%g ",c_f[3]);
+				if(c_f[3]>0) printf("Fail\n");
+				else printf("Ok\n");
+				break;
+			case 13: //Tension/compression string
+				fprintf(file,"g1=%g g2=%g g3=%g g4=%g\n",c_f[0],c_f[1],c_f[3],c_f[3]);
+				printf("g1=%g g2=%g g3=%g g4=%g\n",c_f[0],c_f[1],c_f[3],c_f[3]);
+				break;
+			case 14: //Speed Reducer(Gear Train)
+				fprintf(file,"g1=%g g2=%g g3=%g g4=%g g5=%g g6=%g g7=%g g8=%g g9=%g g10=%g g11=%g\n",c_f[0],c_f[1],c_f[3],c_f[3],c_f[4],c_f[5],c_f[6],c_f[7],c_f[8],c_f[9],c_f[10]);
+				printf("g1=%g g2=%g g3=%g g4=%g g5=%g g6=%g g7=%g g8=%g g9=%g g10=%g g11=%g\n",c_f[0],c_f[1],c_f[3],c_f[3],c_f[4],c_f[5],c_f[6],c_f[7],c_f[8],c_f[9],c_f[10]);
+				break;
+			case 15: //10-Bar-Truss
+				printf("Stress Violation: ");
+				for(i=0;i<10;i++){
+					printf("g(%i)=%g ",i+1, c_f[i]);
+				}
+				printf("\n");
+				printf("DispX: ");
+				for(i=10;i<16;i++){
+					printf("g(%i)=%g ",i+1, c_f[i]);
+				}
+				printf("\n");
+				printf("DispY: ");
+				for(i=16;i<22;i++){
+					printf("g(%i)=%g ",i+1,c_f[i]);
+				}
+				printf("\n");
+
+				fprintf(file,"Stress Violation: ");
+				for(i=0;i<10;i++){
+					fprintf(file,"g(%i)=%g ",i+1, c_f[i]);
+				}
+				fprintf(file,"\n");
+				fprintf(file,"DispX: ");
+				for(i=10;i<16;i++){
+					fprintf(file,"g(%i)=%g ",i+1, c_f[i]);
+				}
+				fprintf(file,"\n");
+				fprintf(file,"DispY: ");
+				for(i=16;i<22;i++){
+					fprintf(file,"g(%i)=%g ",i+1,c_f[i]);
+				}
+				fprintf(file,"\n");
+				break;
+		}
+	}
+}
+
 void sos_iter(){
 	int i;	
 	pthread_t *threads;
@@ -910,9 +994,6 @@ void sos_iter(){
 	threads = (pthread_t*)malloc(CORES*sizeof(pthread_t));
 	if(threads==NULL)exit(0);
 	
-	//cpy_slice_pointers();
-	//cpy_best();
-
 	for (i = 0; i < CORES; ++i){
 		pthread_create(&threads[i], NULL, th_sos, (void *) (argThread+i));
 	}
@@ -920,124 +1001,9 @@ void sos_iter(){
 	for (i = 0; i < CORES; i++){
       	pthread_join(threads[i], NULL);
    	}
-   	//join_best();
    	free(threads);
 }
 
-/*void join_pop(){
-	int i,j;
-	int index_m = 0;
-	int ib=0;
-	
-	for(i = 0 ; i < POP_SIZE ; i++){
-		for(j=0;j<CORES;j++){
-			if(argThread[j].fo_th[i] < argThread[index_m].fo_th[i] && argThread[j].fo_th[i] > 0) index_m = j;
-		}
-		fo[i] = argThread[index_m].fo_th[i];
-		for(j=0;j<DIM;j++){
-			pop[i][j] = argThread[index_m].pop_th[i][j];
-		}
-	}
-	for(i=0;i<CORES;i++){
-		if(argThread[i].bestfo_th < argThread[ib].bestfo_th && argThread[i].bestfo_th > 0) ib = i;
-	}
-	bestfo = argThread[ib].bestfo_th;
-	best_index = argThread[ib].best_index_th;
-	for(j=0;j<DIM;j++){
-		best[j] = argThread[ib].best_th[j];
-	}
-}
-
-void alloc_slice_pointers(){
-	int i,j;
-	for(i=0;i<CORES;i++){
-		argThread[i].pop_th = (double**)malloc(POP_SIZE*sizeof(double*));
-		if(argThread[i].pop_th == NULL)exit(0);
-		double *dados = (double*)malloc(sizeof(double)*DIM*POP_SIZE);	
-        if(dados==NULL)exit(0);
-        for (j = 0;j < POP_SIZE; j++){
-			argThread[i].pop_th[j] = &dados[j*DIM];
-		}
-
-		argThread[i].best_th = (double*)malloc(DIM*sizeof(double));
-		if(argThread[i].best_th==NULL)exit(0);
-		
-		argThread[i].fo_th = (double*)malloc(POP_SIZE*sizeof(double));
-		if(argThread[i].fo_th==NULL)exit(0);
-	}	
-}
-
-void free_slice(){
-	int i,j;
-	for(i=0;i<CORES;i++){
-		free(argThread[i].pop_th[0]);
-		free(argThread[i].pop_th);
-		free(argThread[i].best_th);
-		free(argThread[i].fo_th);
-	}
-	free(argThread);	
-}
-
-void cpy_best(){
-	int i,k;
-	
-	for(i=0;i<CORES;i++){
-		for(k = 0 ; k < DIM ; k++){
-			argThread[i].best_th[k]=best[k];
-		}
-		argThread[i].bestfo_th=bestfo;
-		argThread[i].best_index_th=best_index;
-	}
-}
-
-void cpy_slice_pointers(){
-	int i,j,k;
-
-	for(k=0;k<CORES;k++){ 
-		for(i=0;i<POP_SIZE;i++){
-			for(j=0;j<DIM;j++){
-				argThread[k].pop_th[i][j] = pop[i][j];
-			}	
-		}
-		for(i=0;i<POP_SIZE;i++){		
-			argThread[k].fo_th[i] = fo[i];
-		} 
-	}
-}*/
-
-/*
-void alloc_slice_pointers(){
-	int i;
-	for(i=0;i<CORES;i++){
-		argThread[i].best_th = (double*)malloc(DIM*sizeof(double));
-		if(argThread[i].best_th==NULL)exit(0);
-	}	
-}
-
-void join_best(){
-	int i,j;
-	int ib=0;
-	for(i=0;i<CORES;i++){
-		if(argThread[i].bestfo_th < argThread[ib].bestfo_th && argThread[i].bestfo_th > 0) ib = i;
-	}
-	bestfo = argThread[ib].bestfo_th;
-	best_index = argThread[ib].best_index_th;
-	for(j=0;j<DIM;j++){
-		best[j] = argThread[ib].best_th[j];
-	}
-}
-
-void cpy_best(){
-	int i,k;
-	for(i=0;i<CORES;i++){
-		for(k = 0 ; k < DIM ; k++){
-			argThread[i].best_th[k]=best[k];
-		}
-		argThread[i].bestfo_th=bestfo;
-		argThread[i].best_index_th=best_index;
-	}
-}
-*/
 
 void free_slice(){
 	free(argThread);	
