@@ -28,7 +28,7 @@ double *fo;//[POP_SIZE];      //objective function value.
 double *best;//[DIM];           //best solution found
 double bestfo;//best fo value
 int best_index;//index for the best solution
-double *y; //constraint functions
+double *c_f; //constraint functions
 double *c; //penallity function constant
 int rest;
 int num_fit_eval;
@@ -44,7 +44,7 @@ void freeArrays();
 int GetParameters(char **argv);
 void showParameters();
 void prepararObjFunc();
-double constr(double *sol);
+double constr(double *sol, int cond);
 double objfunc(double *sol, int cond);
 void *th_init_pop(void *arg);
 void initPop();

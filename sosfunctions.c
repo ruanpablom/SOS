@@ -255,7 +255,7 @@ void prepararObjFunc(){
     	}
 }	
 
-double constr(double *sol){//calculate penalization
+double constr(double *sol, int cond){//calculate penalization
 	double y[rest];
 	double pen=0;
 	double r=0,m_1=0,j_1=0,s=0,d=0,pc=0,t1=0,t2=0,t=0,p=0,l=0,e=0,g_1=0,t_max=0,s_max=0,d_max=0;
@@ -703,6 +703,7 @@ double constr(double *sol){//calculate penalization
 			}
 			break;*/
 	}
+	if(cond) memcpy(c_f,y,rest*sizeof(double));
 	return pen;
 }
 
@@ -735,8 +736,7 @@ double objfunc(double *sol, int cond){
     switch (FUNCTION) {
     case 0: //Rastrigin
 
-        for(j=0;j<DIM;j++)
-        {
+        for(j=0;j<DIM;j++){
             top=top+(pow(sol[j],(double)2)-10*cos(2*M_PI*sol[j])+10);
         }
         return top;
@@ -744,14 +744,12 @@ double objfunc(double *sol, int cond){
     case 1: //Schaffer
 
         top1 = 0;
-        for(j=0;j<DIM;j++)
-        {
-        top=top+(pow(sol[j],(double)2));
+        for(j=0;j<DIM;j++){
+        	top=top+(pow(sol[j],(double)2));
         }
         top = pow(top,(double)0.25);
-        for(j=0;j<DIM;j++)
-        {
-        top1=top1+(pow(sol[j],(double)2));
+        for(j=0;j<DIM;j++){
+        	top1=top1+(pow(sol[j],(double)2));
         }
         top1=pow(top1,(double)0.1);
         top1 = pow(sin(50*top1),(double)2) +1.0;
@@ -763,10 +761,9 @@ double objfunc(double *sol, int cond){
         top=0;
         top1=0;
         top2=1;
-        for(j=0;j<DIM;j++)
-        {
-        top1=top1+pow((sol[j]),(double)2);
-        top2=top2*cos((((sol[j])/sqrt((double)(j+1)))*M_PI)/180);
+        for(j=0;j<DIM;j++){
+        	top1=top1+pow((sol[j]),(double)2);
+        	top2=top2*cos((((sol[j])/sqrt((double)(j+1)))*M_PI)/180);
         }
         top=(1/(double)4000)*top1-top2+1;
 
@@ -774,21 +771,18 @@ double objfunc(double *sol, int cond){
 
     case 3: //Ackley
 
-        for (i = 0; i < DIM; i++)
-        {
-        aux += sol[i]*sol[i];
+        for (i = 0; i < DIM; i++){
+        	aux += sol[i]*sol[i];
         }
-        for (i = 0; i < DIM; i++)
-        {
-        aux1 += cos(2.0*M_PI*sol[i]);
+        for (i = 0; i < DIM; i++){
+        	aux1 += cos(2.0*M_PI*sol[i]);
         }
 
         return (-20.0*(exp(-0.2*sqrt(1.0/(float)DIM*aux)))-exp(1.0/(float)DIM*aux1)+20.0+exp(1));
 
     case 4: //Rosenbrock
 
-        for (i = 0; i < DIM-1; i++)
-        {
+        for (i = 0; i < DIM-1; i++){
             top=top+100.*pow((sol[i+1] - pow(sol[i],2.)),2) + pow((sol[i] - 1.),2);
         }
         
@@ -808,7 +802,7 @@ double objfunc(double *sol, int cond){
 		return -top;
 
     case 7: //Booth
-	return pow((sol[0]+(2*sol[1])-7),2)+pow((2*sol[0]+sol[1]-5),2);
+		return pow((sol[0]+(2*sol[1])-7),2)+pow((2*sol[0]+sol[1]-5),2);
 
     case 8: //Quartic
  		for(j=0;j<DIM;j++){
@@ -817,32 +811,32 @@ double objfunc(double *sol, int cond){
 		return top+randon(0,1);
 	
 	case 9:
-		top=constr(sol);
+		top=constr(sol,cond);
 		return (0.0624*(sol[0]+sol[1]+sol[2]+sol[3]+sol[4]))+top;
 	
 	case 10:
-		top=constr(sol);
+		top=constr(sol,cond);
 		return (5000/(((sol[2]*(sol[1]-2*sol[3]))/12)+((sol[0]*pow(sol[3],3))/6)+(2*sol[0]*sol[3]*0.25*pow(sol[1]-sol[3],2))))+top;
 	
 	case 11:
-		top=constr(sol);
+		top=constr(sol,cond);
 		if(cond) printf("Penalty: %g\n", top);
 		return (1.10471*pow(sol[0],2)*sol[1]+0.04811*sol[2]*sol[3]*(14.0+sol[1]))+top;
 	
 	case 12://Pressure Vessel
-		top=constr(sol);
+		top=constr(sol,cond);
 		if(cond) printf("Penalty: %g\n", top);
 		return ((0.6224*sol[0]*sol[2]*sol[3])+(1.7781*sol[1]*pow(sol[2],2))+(3.1661*pow(sol[0],2)*sol[3])+(19.84*pow(sol[0],2)*sol[2]))+top;
 	
 	case 13: //Tension/compression string
-		top=constr(sol);
+		top=constr(sol,cond);
 		return ((sol[2]+2)*sol[1]*pow(sol[0],2))+top;
 	
 	case 14: //Speed Reducer
-		top=constr(sol);
+		top=constr(sol,cond);
 		return (0.7854*sol[0]*pow(sol[1],2)*(3.3333*pow(sol[2],2)+14.9334*sol[2]-43.0934)-1.508*sol[0]*(pow(sol[5],2)+pow(sol[6],2))+7.477*(pow(sol[5],3)+pow(sol[6],3))+0.7854*(sol[3]*pow(sol[5],2)+sol[4]*pow(sol[6],2)))+top;
     case 15: 		
-		top=constr(sol);		    	
+		top=constr(sol,cond);		    	
     		area = (double*) malloc (DIM * sizeof(double));
 		if(area==NULL)exit(0);
 		for (i=0; i < DIM; i++){
@@ -1370,14 +1364,14 @@ void AllocArrays(){
 	argThread = (slice*)malloc(CORES*sizeof(slice));
 	if(argThread==NULL)exit(0);
 
-	//alloc_slice_pointers();
+	c_f = (double*)malloc(rest*sizeof(double));
+	if(c_f==NULL)exit(0);
 
 	pop = (double**)malloc(POP_SIZE*sizeof(double*));
 		double *dados = (double*)malloc(sizeof(double)*DIM*POP_SIZE);	
         for (j = 0;j < POP_SIZE; j++)
 			pop[j] = &dados[j*DIM];
 
-	//printf("Passou\n");
 
 	fo = (double*)malloc (POP_SIZE*sizeof(double));
 

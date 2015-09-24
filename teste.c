@@ -12,21 +12,22 @@ double randon( double inferior, double superior);
 
 int main(){
 	int i;
-	double sol[4];
-	    
-	sol[0]=0.781374;
-	sol[1]=0.386296;
-	sol[2]=40.4856;
-	sol[3]=197.717;
-	sol[4]=197.717;
+	double sol[10];
+	            
+	sol[0]=6.01642;
+	sol[1]=5.30965;
+	sol[2]=4.49434;
+	sol[3]=3.50064;
+	sol[4]=2.15261;
 	sol[5]=197.717;
 	sol[6]=197.717;
 	sol[7]=197.717;
 	sol[8]=197.717;
 	sol[9]=197.717;
-	//printf("%g\n",((0.6224*sol[0]*sol[2]*sol[3])+(1.7781*sol[1]*pow(sol[2],2))+(3.1661*pow(sol[0],2)*sol[3])+(19.84*pow(sol[0],2)*sol[2])));
-	for(i=0;i<10000;i++)
+	printf("%g\n",(0.0624*(sol[0]+sol[1]+sol[2]+sol[3]+sol[4])));
+	/*for(i=0;i<10000;i++)
 		printf("%g\n",randon(1,4));
+	*/
 	return 0;
 }
 

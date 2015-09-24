@@ -2,9 +2,9 @@
 RUN = 10
 MAX_ITER = 2500
 POP_SIZE = 30			
-DIM = 10
-FUNCTION = 15
-CORES = 1
+DIM = 3
+FUNCTION = 13
+CORES = 2
 
 /* RUN is the number of times the SOS alg will run.*/
 /* POP_SIZE is the number of candidate solutions that compounds each population. */

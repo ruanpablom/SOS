@@ -36,13 +36,13 @@ int main(int argc, char **argv){
 	FILE *file;
 	FILE *shellComands;
 	
-	/*
+	
 	//refresh the folder of plotting
 	shellComands = popen ("rm dadosplot// -R", "w");
 	pclose(shellComands);
 	shellComands = popen ("mkdir dadosplot", "w");
 	pclose(shellComands);
-	//*/
+	//
 
 	srand(time(NULL));
 
@@ -92,11 +92,9 @@ int main(int argc, char **argv){
 	for (r=0;r<RUN;r++){	
 		//Init population
 		initPop();
-		
 		bestfo = 10000000;
 		
 		for(i=0;i<POP_SIZE;i++){
-			//fo[i] = objfunc(pop[i], 0);
 			if(fo[i]<=bestfo){
 				best_index=i;
 				bestfo=fo[i];
@@ -107,7 +105,7 @@ int main(int argc, char **argv){
 		num_fit_eval=0;
 		num_iter=0;
 		mediafo=0;
-		/*strcpy(str,"dadosplot//dadosplot");
+		strcpy(str,"dadosplot//dadosplot");
 		converteDecChar(strf,r);
 		strcat(strf,".txt");
 		strcat(str,strf);
@@ -116,187 +114,186 @@ int main(int argc, char **argv){
     	   	exit(1);
     	}
 		fprintf(file,"%s %14s %15s\n","#ITER","#BEST_FO","#MEDIA_FO");
-		fclose(file);*/
+		fclose(file);
 		while(num_iter<MAX_ITER){
 			num_iter++;
 			sos_iter();
 			for(i=0;i<POP_SIZE;i++){
 				mediafo+=fo[i];
 			}
-			mediafo=mediafo/POP_SIZE;/*
+			mediafo=mediafo/POP_SIZE;
 			if((file = fopen(str,"a")) == NULL){
        			printf("Erro ao abrir arquivo!!!\n\n");
         		exit(1);
       		}
 			fprintf(file,"%i%18g%15g\n",num_iter,bestfo,mediafo);
-			fclose(file);*/
+			fclose(file);
 			mediaM[num_iter]+=mediafo;//sum of all mediafo in the num_iter position
 			mediaBfo[num_iter]+=bestfo;//sum of all bestfo	in the num_iter position
 		}
 		
 		//Loop de Iterações.
-		/*
+		
 		if((file = fopen("dadosplot//exec.txt","a")) == NULL){
        		printf("Erro ao abrir arquivo!!!\n\n");
        		exit(1);
-      	}*/
+      	}
 		printf("RUN: %d\n",r);
-		//fprintf(file,"RUN: %d\n",r);
+		fprintf(file,"RUN: %d\n",r);
 		printf("Best solution: ");
-		//fprintf(file,"Best solution: ");
+		fprintf(file,"Best solution: ");
 		for (k=0; k<DIM;k++){//variables
 			printf("%g ",best[k]);
-			//fprintf(file,"%g ",best[k]);
+			fprintf(file,"%g ",best[k]);
 		}
 		printf(" Fo:");
-		//fprintf(file," Fo:");
+		fprintf(file," Fo:");
 		printf("%g \n",bestfo);
-		//fprintf(file,"%g \n",bestfoRUN);
+		fprintf(file,"%g \n",bestfoRUN);
 		if(r==0)bestfoRUN=bestfo;
 		bestfoRUN=min(bestfo, bestfoRUN);
 		printf("MIN: %g\n",bestfoRUN);
 		printf("bestfo: %g\n", bestfo);
 		printf("bestfoRUN: %g\n", bestfoRUN);
 	
-		/*if(COND){
-			objfunc(best, 1);
+		if(COND){
+			if(constr(best,1)==0)var[r]=bestfo;
+			else var[r]=2147483646;
 			//values of constraints
 			
 			switch(FUNCTION){
 				case 9: //Cantilever Beam
-					fprintf(file,"g1=%g ",y[0]);
-					if(y[0]>1) fprintf(file, "Fail\n");
+					fprintf(file,"g1=%g ",c_f[0]);
+					if(c_f[0]>1) fprintf(file, "Fail\n");
 					else fprintf(file, "Ok\n");
-					printf("g1=%g ",y[0]);
-					if(y[0]>1)printf("Fail\n");
+					printf("g1=%g ",c_f[0]);
+					if(c_f[0]>1)printf("Fail\n");
 					else printf("Ok\n");
 					break;
 				case 10: //I-Beam vertical deflection 
-					fprintf(file, "g1=%g ",y[0]);
-					if(y[0]>300) fprintf(file, "Fail ");
+					fprintf(file, "g1=%g ",c_f[0]);
+					if(c_f[0]>300) fprintf(file, "Fail ");
 					else fprintf(file, "Ok ");
-					fprintf(file, "g2=%g ",y[1]);
-					if(y[1]>56) fprintf(file, "Fail\n");
+					fprintf(file, "g2=%g ",c_f[1]);
+					if(c_f[1]>56) fprintf(file, "Fail\n");
 					else fprintf(file, "Ok\n");
-					printf("g1=%g ",y[0]);
-					if(y[0]>300) printf("Fail ");
+					printf("g1=%g ",c_f[0]);
+					if(c_f[0]>300) printf("Fail ");
 					else printf("Ok ");
-					printf("g2=%g ",y[1]);
-					if(y[1]>56) printf("Fail\n");
+					printf("g2=%g ",c_f[1]);
+					if(c_f[1]>56) printf("Fail\n");
 					else printf("Ok\n");
 					break;
 				case 11: //Welded Beam 
-					fprintf(file,"g1=%g ",y[0]);fprintf(file,"g1=%g ",y[0]);
-					if(y[0]>0) fprintf(file, "Fail ");
+					fprintf(file,"g1=%g ",c_f[0]);fprintf(file,"g1=%g ",c_f[0]);
+					if(c_f[0]>0) fprintf(file, "Fail ");
 					else fprintf(file, "Ok ");
-					fprintf(file,"g2=%g ",y[1]);
-					if(y[1]>0) fprintf(file, "Fail ");
+					fprintf(file,"g2=%g ",c_f[1]);
+					if(c_f[1]>0) fprintf(file, "Fail ");
 					else fprintf(file, "Ok ");
-					fprintf(file,"g3=%g ",y[2]);
-					if(y[2]>0) fprintf(file, "Fail ");
+					fprintf(file,"g3=%g ",c_f[2]);
+					if(c_f[2]>0) fprintf(file, "Fail ");
 					else fprintf(file, "Ok ");
-					fprintf(file,"g4=%g ",y[3]);
-					if(y[3]>0) fprintf(file, "Fail ");
+					fprintf(file,"g4=%g ",c_f[3]);
+					if(c_f[3]>0) fprintf(file, "Fail ");
 					else fprintf(file, "Ok ");
-					fprintf(file,"g5=%g ",y[4]);
-					if(y[4]>0) fprintf(file, "Fail ");
+					fprintf(file,"g5=%g ",c_f[4]);
+					if(c_f[4]>0) fprintf(file, "Fail ");
 					else fprintf(file, "Ok ");
-					fprintf(file,"g6=%g ",y[5]);
-					if(y[5]>0) fprintf(file, "Fail ");
+					fprintf(file,"g6=%g ",c_f[5]);
+					if(c_f[5]>0) fprintf(file, "Fail ");
 					else fprintf(file, "Ok ");
-					fprintf(file,"g7=%g ",y[6]);
-					if(y[6]>0) fprintf(file, "Fail\n");
+					fprintf(file,"g7=%g ",c_f[6]);
+					if(c_f[6]>0) fprintf(file, "Fail\n");
 					else fprintf(file, "Ok\n");
 
-					printf("g1=%g ",y[0]);
-					if(y[0]>0) printf("Fail ");
+					printf("g1=%g ",c_f[0]);
+					if(c_f[0]>0) printf("Fail ");
 					else printf("Ok ");
-					printf("g2=%g ",y[1]);
-					if(y[1]>0) printf("Fail ");
+					printf("g2=%g ",c_f[1]);
+					if(c_f[1]>0) printf("Fail ");
 					else printf("Ok ");
-					printf("g3=%g ",y[2]);
-					if(y[2]>0) printf("Fail ");
+					printf("g3=%g ",c_f[2]);
+					if(c_f[2]>0) printf("Fail ");
 					else printf("Ok ");
-					printf("g4=%g ",y[3]);
-					if(y[3]>0) printf("Fail ");
+					printf("g4=%g ",c_f[3]);
+					if(c_f[3]>0) printf("Fail ");
 					else printf("Ok ");
-					printf("g5=%g ",y[4]);
-					if(y[4]>0) printf("Fail ");
+					printf("g5=%g ",c_f[4]);
+					if(c_f[4]>0) printf("Fail ");
 					else printf("Ok ");
-					printf("g6=%g ",y[5]);
-					if(y[5]>0) printf("Fail ");
+					printf("g6=%g ",c_f[5]);
+					if(c_f[5]>0) printf("Fail ");
 					else printf("Ok ");
-					printf("g7=%g ",y[6]);
-					if(y[6]>0) printf("Fail\n");
+					printf("g7=%g ",c_f[6]);
+					if(c_f[6]>0) printf("Fail\n");
 					else printf("Ok\n");
 					break;
 				case 12: //Pressure Vessel 
-					fprintf(file,"g1=%g ",y[0]);
-					if(y[0]>0) fprintf(file, "Fail ");
+					fprintf(file,"g1=%g ",c_f[0]);
+					if(c_f[0]>0) fprintf(file, "Fail ");
 					else fprintf(file, "Ok ");
-					fprintf(file,"g2=%g ",y[1]);
-					if(y[1]>0) fprintf(file, "Fail ");
+					fprintf(file,"g2=%g ",c_f[1]);
+					if(c_f[1]>0) fprintf(file, "Fail ");
 					else fprintf(file, "Ok ");
-					fprintf(file,"g3=%g ",y[2]);
-					if(y[2]>0) fprintf(file, "Fail ");
+					fprintf(file,"g3=%g ",c_f[2]);
+					if(c_f[2]>0) fprintf(file, "Fail ");
 					else fprintf(file, "Ok ");
-					fprintf(file,"g4=%g ",y[3]);
-					if(y[3]>0) fprintf(file, "Fail\n");
+					fprintf(file,"g4=%g ",c_f[3]);
+					if(c_f[3]>0) fprintf(file, "Fail\n");
 					else fprintf(file, "Ok\n");
 
-					printf("g1=%g ",y[0]);
-					if(y[0]>0) printf("Fail ");
+					printf("g1=%g ",c_f[0]);
+					if(c_f[0]>0) printf("Fail ");
 					else printf("Ok ");
-					printf("g2=%g ",y[1]);
-					if(y[1]>0) printf("Fail ");
+					printf("g2=%g ",c_f[1]);
+					if(c_f[1]>0) printf("Fail ");
 					else printf("Ok ");
-					printf("g3=%g ",y[2]);
-					if(y[2]>0) printf("Fail ");
+					printf("g3=%g ",c_f[2]);
+					if(c_f[2]>0) printf("Fail ");
 					else printf("Ok ");
-					printf("g4=%g ",y[3]);
-					if(y[3]>0) printf("Fail\n");
+					printf("g4=%g ",c_f[3]);
+					if(c_f[3]>0) printf("Fail\n");
 					else printf("Ok\n");
 					break;
 				case 13: //Tension/compression string
-					fprintf(file,"g1=%g g2=%g g3=%g g4=%g\n",y[0],y[1],y[3],y[3]);
-					printf("g1=%g g2=%g g3=%g g4=%g\n",y[0],y[1],y[3],y[3]);
+					fprintf(file,"g1=%g g2=%g g3=%g g4=%g\n",c_f[0],c_f[1],c_f[3],c_f[3]);
+					printf("g1=%g g2=%g g3=%g g4=%g\n",c_f[0],c_f[1],c_f[3],c_f[3]);
 					break;
 				case 14: //Speed Reducer(Gear Train)
-					fprintf(file,"g1=%g g2=%g g3=%g g4=%g g5=%g g6=%g g7=%g g8=%g g9=%g g10=%g g11=%g\n",y[0],y[1],y[3],y[3],y[4],y[5],y[6],y[7],y[8],y[9],y[10]);
-					printf("g1=%g g2=%g g3=%g g4=%g g5=%g g6=%g g7=%g g8=%g g9=%g g10=%g g11=%g\n",y[0],y[1],y[3],y[3],y[4],y[5],y[6],y[7],y[8],y[9],y[10]);
+					fprintf(file,"g1=%g g2=%g g3=%g g4=%g g5=%g g6=%g g7=%g g8=%g g9=%g g10=%g g11=%g\n",c_f[0],c_f[1],c_f[3],c_f[3],c_f[4],c_f[5],c_f[6],c_f[7],c_f[8],c_f[9],c_f[10]);
+					printf("g1=%g g2=%g g3=%g g4=%g g5=%g g6=%g g7=%g g8=%g g9=%g g10=%g g11=%g\n",c_f[0],c_f[1],c_f[3],c_f[3],c_f[4],c_f[5],c_f[6],c_f[7],c_f[8],c_f[9],c_f[10]);
 					break;
 				case 15: //10-Bar-Truss
 					printf("Stress Violation: ");
 					for(i=0;i<10;i++){
-						printf("g(%i)=%g ",i+1, y[i]);
+						printf("g(%i)=%g ",i+1, c_f[i]);
 					}
 					printf("\n");
 					printf("DispX: ");
 					for(i=10;i<16;i++){
-						printf("g(%i)=%g ",i+1, y[i]);
+						printf("g(%i)=%g ",i+1, c_f[i]);
 					}
 					printf("\n");
 					printf("DispY: ");
 					for(i=16;i<22;i++){
-						printf("g(%i)=%g ",i+1, y[i]);
+						printf("g(%i)=%g ",i+1,c_f[i]);
 					}
 					printf("\n");
 					break;
 			}
 			//
-		}*/
+		}
 		printf("N_fit_eval:");
-		//fprintf(file,"N_fit_eval:");
+		fprintf(file,"N_fit_eval:");
 		printf("%i \n\n",num_fit_eval);
-		//fprintf(file, "%i \n\n",num_fit_eval);
-		//fclose(file);
+		fprintf(file, "%i \n\n",num_fit_eval);
+		fclose(file);
 		//
-		if(constr(best)==0)var[r]=bestfo;
-		else var[r]=2147483646;
-		/*
+		
 		strf[((strchr(strf,'.'))-strf)]='\0';
 		plot(shellComands,strf);//plotting for each run
-		*/
+		
 	}//end FOR RUN
 	bestfo=var[0];
 	best_index=0;
@@ -305,7 +302,7 @@ int main(int argc, char **argv){
 			bestfo=var[i];
 			best_index=i;
 		}
-	}/*
+	}
 	if((file = fopen("dadosplot//dadosplotFinal.txt","a")) == NULL){
         printf("Erro ao abrir arquivo!!!\n\n");
         exit(1);
@@ -322,30 +319,30 @@ int main(int argc, char **argv){
        	printf("Erro ao abrir arquivo!!!\n\n");
        	exit(1);
     }
-	*/
+	
 	int nfeasible = AvgStdDev(&avg,&stdDev,var);
 	printf("====================\n");
-	//fprintf(file,"====================\n");
+	fprintf(file,"====================\n");
 	printf("Best Fo: ");
-	//fprintf(file,"Best Fo: ");
+	fprintf(file,"Best Fo: ");
 	printf("%g\n",bestfoRUN);
-	//fprintf(file,"%g\n",bestfoRUN);
+	fprintf(file,"%g\n",bestfoRUN);
 	printf("Avg: ");
-	//fprintf(file,"Avg: ");
+	fprintf(file,"Avg: ");
 	printf("%g\n",avg);
-	//fprintf(file,"%g\n",avg);
+	fprintf(file,"%g\n",avg);
 	printf("StdDev: ");
-	//fprintf(file,"StdDev: ");
+	fprintf(file,"StdDev: ");
 	printf("%g\n",stdDev);
-	//fprintf(file, "%g\n",stdDev);
+	fprintf(file, "%g\n",stdDev);
 	printf("Feasible: ");
-	//fprintf(file,"Feasible: ");
+	fprintf(file,"Feasible: ");
 	printf("%i\n",nfeasible);
-	//fprintf(file, "%i\n",nfeasible);
+	fprintf(file, "%i\n",nfeasible);
 	printf("====================\n");
-	//fprintf(file,"====================\n");
-	//fclose(file);
-	freeArrays(POP_SIZE, pop, fo, best, ub, lb, y, c);
+	fprintf(file,"====================\n");
+	fclose(file);
+	freeArrays();
 	
 	return 0;
 }
