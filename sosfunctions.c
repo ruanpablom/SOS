@@ -16,21 +16,6 @@ double randon( double inferior, double superior){
 }
 
 
-/*void AllocArrays(int pop_size, int dim, double **pop, double *fo, double *best, double *ub, double *lb){
-	int j;
-
-	pop = (double**)malloc (pop_size*sizeof(double*));
-        for (j = 0;j < pop_size; j++)
-		pop[j] = (double*)malloc (dim * sizeof(double));
-
-	fo = (double*)malloc (pop_size*sizeof(double));
-
-	best = (double*)malloc (dim*sizeof(double));
-
-	ub=(double*)malloc (dim*sizeof(double));
-	lb=(double*)malloc (dim*sizeof(double));
-}*/
-
 void freeArrays(){
 	int i;
 	free(fo);
@@ -349,7 +334,7 @@ double constr(double sol[]){//calculate penalization
 			if(y[5]>0)pen+=pow(y[5],2);
 			y[6]=6000-pc;
 			if(y[6]>0)pen+=pow(y[6],2);
-			pen*=1000000;
+			pen*=10000000;
 			break;
 		case 12: //Pressure Vessel
 			y[0]=-sol[0]+0.0193*sol[2];
@@ -368,7 +353,7 @@ double constr(double sol[]){//calculate penalization
 			if(y[3]>0){
 				pen+=y[3]*y[3];
 			}
-			pen*=1000000000;
+			pen*=1000000;
 		break;
 		case 13: //Tension/compression string
 			y[0]=1-((pow(sol[1],3)*sol[2])/(71785*pow(sol[0],4)));
@@ -923,7 +908,7 @@ void mutualism_phase(int index_i){
 	}
 	//
 	newfo_i=objfunc(new_x_i, 0);//calculates fitness for new_x_i
-	newfo_j=objfunc(new_x_i, 0);//calculates fitness for new_x_j
+	newfo_j=objfunc(new_x_j, 0);//calculates fitness for new_x_j
 
 	if(fo[index_i]>=newfo_i){//greedy selection for xi
 		for(i=0;i<DIM;i++){
