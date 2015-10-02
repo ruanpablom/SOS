@@ -1066,7 +1066,7 @@ void mutualism_phase(int index_i, double **pop_th, double *best_th, double *fo_t
 	}
 	
 	//cáculo Eqs(1) (2) (3)
-	pthread_mutex_lock(&data_mutex);
+	//pthread_mutex_lock(&data_mutex);
 	for(i=0;i<DIM;i++){
 		mutual[i]=(pop_th[index_i][i]+pop_th[index_j][i])/2;
 		new_x_i[i]=pop_th[index_i][i]+(array_rand[i]*(best_th[i]-(mutual[i]*bf1)));
@@ -1083,31 +1083,26 @@ void mutualism_phase(int index_i, double **pop_th, double *best_th, double *fo_t
 			if(new_x_j[i]<l[i])new_x_j[i]=l[i];
 		}
 	}
-	pthread_mutex_unlock(&data_mutex);
+	//pthread_mutex_unlock(&data_mutex);
 	//
 	newfo_i=objfunc(new_x_i, 0);//calculates fitness for new_x_i
-	if(newfo_i<0)
-				printf("%g\n",newfo_i);
 	newfo_j=objfunc(new_x_j, 0);//calculates fitness for new_x_j
-	if(newfo_j<0)
-				printf("%g\n",newfo_j);
-
-	pthread_mutex_lock(&data_mutex);
+	//pthread_mutex_lock(&data_mutex);
 	if(fo_th[index_i]>=newfo_i){//greedy selection for xi
 		for(i=0;i<DIM;i++){
 			pop_th[index_i][i]=new_x_i[i];
 		}
 		fo_th[index_i] = newfo_i;
 	}
-	pthread_mutex_unlock(&data_mutex);
-	pthread_mutex_lock(&data_mutex);
+	//pthread_mutex_unlock(&data_mutex);
+	//pthread_mutex_lock(&data_mutex);
 	if(fo_th[index_j]>=newfo_j){//greedy selection for xj
 		for(i=0;i<DIM;i++){
 			pop_th[index_j][i]=new_x_j[i];
 		}
 		fo_th[index_j]=newfo_j;
 	}
-	pthread_mutex_unlock(&data_mutex);
+	//pthread_mutex_unlock(&data_mutex);
 	free(array_rand);
 	free(new_x_i);	
 	free(new_x_j);
@@ -1135,11 +1130,12 @@ void commensalism_phase(int index_i, double **pop_th, double *best_th, double *f
         memcpy(u,ub,DIM*sizeof(double));
 
 	//puts values for array_rand and new_x_i
-	pthread_mutex_lock(&data_mutex);
 	for(i=0;i<DIM;i++){
 		array_rand[i]=randon(-1,1);
-		new_x_i[i]=pop_th[index_i][i]+(array_rand[i]*(best_th[i]-pop_th[index_j][i]));
-		if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
+		//pthread_mutex_lock(&data_mutex);
+                new_x_i[i]=pop_th[index_i][i]+(array_rand[i]*(best_th[i]-pop_th[index_j][i]));
+		//pthread_mutex_unlock(&data_mutex);
+                if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
 			if(new_x_i[i]<l[0])new_x_i[i]=l[0];
 			if(new_x_i[i]>u[0])new_x_i[i]=u[0];
 		}else{
@@ -1147,18 +1143,21 @@ void commensalism_phase(int index_i, double **pop_th, double *best_th, double *f
 			if(new_x_i[i]>u[i])new_x_i[i]=u[i];
 		}
 	}
-	pthread_mutex_unlock(&data_mutex);
+	
 
 	newfo_i=objfunc(new_x_i, 0);//calculates fitness for new_x_i
 	
-	pthread_mutex_lock(&data_mutex);
+	
 	if(fo_th[index_i]>=newfo_i){////greedy selection for xi
 		for(i=0;i<DIM;i++){
-			pop_th[index_i][i]=new_x_i[i];
-		}
-		fo_th[index_i]=newfo_i;
-	}
-	pthread_mutex_unlock(&data_mutex);
+			//pthread_mutex_lock(&data_mutex);
+                        pop_th[index_i][i]=new_x_i[i];
+		        //pthread_mutex_unlock(&data_mutex);
+                }
+			//pthread_mutex_lock(&data_mutex);
+                        fo_th[index_i]=newfo_i;
+	                //pthread_mutex_unlock(&data_mutex);                
+        }
 
 	free(array_rand);
 	free(new_x_i);	
@@ -1178,16 +1177,18 @@ void parasitism_phase(int index_i, double **pop_th, double *fo_th){
         memcpy(l,lb,DIM*sizeof(double));
         memcpy(u,ub,DIM*sizeof(double));
 
-	pthread_mutex_lock(&data_mutex);
+	
 	for(i=0;i<DIM;i++){//copies xi for parasite
-		parasite[i]=pop_th[index_i][i];
-	}
-	pthread_mutex_unlock(&data_mutex);
+            //pthread_mutex_lock(&data_mutex);		
+            parasite[i]=pop_th[index_i][i];
+	    //pthread_mutex_unlock(&data_mutex);
+        }
+	
 
 	while(index_j==index_i){
 		index_j=(int)randon(0,POP_SIZE);
 	}
-	pthread_mutex_lock(&data_mutex);
+	
 	if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
 		parasite[pick]=randon(l[0],u[0]);//change the value of the DIMension choosen
 	}else{
@@ -1197,11 +1198,14 @@ void parasitism_phase(int index_i, double **pop_th, double *fo_th){
 	
 	if(fo_th[index_j]>=parasite_fo){//greedy selection between xj and parasite
 		for(i=0;i<DIM;i++){
-			pop_th[index_j][i]=parasite[i];
-		}
-		fo_th[index_j]=parasite_fo;
-	}
-	pthread_mutex_unlock(&data_mutex);
+		    //pthread_mutex_lock(&data_mutex);	
+                    pop_th[index_j][i]=parasite[i];
+		    //pthread_mutex_unlock(&data_mutex);
+                }
+		//pthread_mutex_lock(&data_mutex); 
+                fo_th[index_j]=parasite_fo;
+		//pthread_mutex_unlock(&data_mutex);		
+        }
 	free(parasite);	
 }
 
