@@ -1,0 +1,280 @@
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.001s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+./time.sh: linha 6: ./alg: Arquivo ou diretório não encontrado
+
+real	0m0.000s
+user	0m0.000s
+sys	0m0.000s
+
+real	0m9.880s
+user	0m22.342s
+sys	0m3.413s
+
+real	0m9.882s
+user	0m22.343s
+sys	0m3.311s
+
+real	0m9.889s
+user	0m22.565s
+sys	0m3.079s
+
+real	0m9.863s
+user	0m22.415s
+sys	0m3.262s
+
+real	0m9.803s
+user	0m22.135s
+sys	0m3.529s
+
+real	0m9.901s
+user	0m22.390s
+sys	0m3.281s
+
+real	0m9.871s
+user	0m22.374s
+sys	0m3.345s
+
+real	0m9.893s
+user	0m22.274s
+sys	0m3.452s
+
+real	0m9.905s
+user	0m22.519s
+sys	0m3.201s
+
+real	0m9.921s
+user	0m22.486s
+sys	0m3.263s
+
+real	0m9.881s
+user	0m22.330s
+sys	0m3.351s
+
+real	0m9.833s
+user	0m22.483s
+sys	0m3.272s
+
+real	0m9.802s
+user	0m22.427s
+sys	0m3.263s
+
+real	0m9.909s
+user	0m22.384s
+sys	0m3.356s
+
+real	0m9.813s
+user	0m22.381s
+sys	0m3.319s
+
+real	0m9.901s
+user	0m22.557s
+sys	0m3.208s
+
+real	0m9.862s
+user	0m22.420s
+sys	0m3.288s
+
+real	0m9.857s
+user	0m22.570s
+sys	0m3.106s
+
+real	0m9.850s
+user	0m22.469s
+sys	0m3.160s
+
+real	0m9.863s
+user	0m22.340s
+sys	0m3.367s

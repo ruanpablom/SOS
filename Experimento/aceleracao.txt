@@ -1,5 +1,5 @@
 Threads		Tempo Real  Tempo Linear 
-1		1.000       1.0
+1		1.000       1
 2		1.270       2
 3		1.377       3
 4		1.631       4
