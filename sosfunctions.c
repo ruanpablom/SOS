@@ -1042,12 +1042,17 @@ void mutualism_phase(int index_i, double **pop_th, double *best_th, double *fo_t
 	double *new_x_i,*new_x_j;
 	double newfo_i,newfo_j;
 	double *array_rand;
+        double *l,*u;
 	int index_j=index_i;
 
 	while(index_j==index_i){
 		index_j=(int)randon(0,POP_SIZE);
 	}//pick xj	
 
+        l = (double*)malloc(DIM*sizeof(double));
+        u = (double*)malloc(DIM*sizeof(double));
+        memcpy(l,lb,DIM*sizeof(double));
+        memcpy(u,ub,DIM*sizeof(double));
 	array_rand=(double*)malloc(DIM*sizeof(double));
 	new_x_i = (double*)malloc(DIM*sizeof(double));
 	new_x_j = (double*)malloc(DIM*sizeof(double));	
@@ -1067,15 +1072,15 @@ void mutualism_phase(int index_i, double **pop_th, double *best_th, double *fo_t
 		new_x_i[i]=pop_th[index_i][i]+(array_rand[i]*(best_th[i]-(mutual[i]*bf1)));
 		new_x_j[i]=pop_th[index_j][i]+(array_rand[i]*(best_th[i]-(mutual[i]*bf2)));
 		if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
-			if(new_x_i[i]>ub[0])new_x_i[i]=ub[0];
-			if(new_x_j[i]>ub[0])new_x_j[i]=ub[0];
-			if(new_x_i[i]<lb[0])new_x_i[i]=lb[0];
-			if(new_x_j[i]<lb[0])new_x_j[i]=lb[0];
+			if(new_x_i[i]>u[0])new_x_i[i]=u[0];
+			if(new_x_j[i]>u[0])new_x_j[i]=u[0];
+			if(new_x_i[i]<l[0])new_x_i[i]=l[0];
+			if(new_x_j[i]<l[0])new_x_j[i]=l[0];
 		}else{
-			if(new_x_i[i]>ub[i])new_x_i[i]=ub[i];
-			if(new_x_j[i]>ub[i])new_x_j[i]=ub[i];
-			if(new_x_i[i]<lb[i])new_x_i[i]=lb[i];
-			if(new_x_j[i]<lb[i])new_x_j[i]=lb[i];
+			if(new_x_i[i]>u[i])new_x_i[i]=u[i];
+			if(new_x_j[i]>u[i])new_x_j[i]=u[i];
+			if(new_x_i[i]<l[i])new_x_i[i]=l[i];
+			if(new_x_j[i]<l[i])new_x_j[i]=l[i];
 		}
 	}
 	pthread_mutex_unlock(&data_mutex);
@@ -1113,17 +1118,21 @@ void commensalism_phase(int index_i, double **pop_th, double *best_th, double *f
 	int i;
 	double *array_rand;
 	int index_j=index_i;
-	double *new_x_i;
+	double *new_x_i,*u,*l;
 	double newfo_i;
 
 	while(index_j==index_i){
 		index_j=(int)randon(0, POP_SIZE);
 	}//pick xj	
 
-	//alloc arrays
+	//alloc arrays//
+        l = (double*)malloc(DIM*sizeof(double));
+        u = (double*)malloc(DIM*sizeof(double));
 	array_rand=(double*)malloc(DIM*sizeof(double));
 	new_x_i = (double*)malloc(DIM*sizeof(double));
 	//
+        memcpy(l,lb,DIM*sizeof(double));
+        memcpy(u,ub,DIM*sizeof(double));
 
 	//puts values for array_rand and new_x_i
 	pthread_mutex_lock(&data_mutex);
@@ -1131,11 +1140,11 @@ void commensalism_phase(int index_i, double **pop_th, double *best_th, double *f
 		array_rand[i]=randon(-1,1);
 		new_x_i[i]=pop_th[index_i][i]+(array_rand[i]*(best_th[i]-pop_th[index_j][i]));
 		if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
-			if(new_x_i[i]<lb[0])new_x_i[i]=lb[0];
-			if(new_x_i[i]>ub[0])new_x_i[i]=ub[0];
+			if(new_x_i[i]<l[0])new_x_i[i]=l[0];
+			if(new_x_i[i]>u[0])new_x_i[i]=u[0];
 		}else{
-			if(new_x_i[i]<lb[i])new_x_i[i]=lb[i];
-			if(new_x_i[i]>ub[i])new_x_i[i]=ub[i];
+			if(new_x_i[i]<l[i])new_x_i[i]=l[i];
+			if(new_x_i[i]>u[i])new_x_i[i]=u[i];
 		}
 	}
 	pthread_mutex_unlock(&data_mutex);
@@ -1156,7 +1165,7 @@ void commensalism_phase(int index_i, double **pop_th, double *best_th, double *f
 }
 
 void parasitism_phase(int index_i, double **pop_th, double *fo_th){
-	double *parasite;
+	double *parasite,*u,*l;
 	double parasite_fo;
 	int pick;
 	int index_j=index_i;
@@ -1164,7 +1173,11 @@ void parasitism_phase(int index_i, double **pop_th, double *fo_th){
 
 	parasite=(double*)malloc(DIM*sizeof(double));//alloc parasite array	
 	pick=(int)randon(0,DIM);//chooses the DIMension for change
-	
+	l = (double*)malloc(DIM*sizeof(double));
+        u = (double*)malloc(DIM*sizeof(double));
+        memcpy(l,lb,DIM*sizeof(double));
+        memcpy(u,ub,DIM*sizeof(double));
+
 	pthread_mutex_lock(&data_mutex);
 	for(i=0;i<DIM;i++){//copies xi for parasite
 		parasite[i]=pop_th[index_i][i];
@@ -1176,9 +1189,9 @@ void parasitism_phase(int index_i, double **pop_th, double *fo_th){
 	}
 	pthread_mutex_lock(&data_mutex);
 	if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
-		parasite[pick]=randon(lb[0],ub[0]);//change the value of the DIMension choosen
+		parasite[pick]=randon(l[0],u[0]);//change the value of the DIMension choosen
 	}else{
-		parasite[pick]=randon(lb[pick],ub[pick]);//change the value of the DIMension choosen
+		parasite[pick]=randon(l[pick],u[pick]);//change the value of the DIMension choosen
 	}
 	parasite_fo=objfunc(parasite, 0);//calculates fitness for parasite
 	
