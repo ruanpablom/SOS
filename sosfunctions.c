@@ -830,15 +830,20 @@ void *th_sos(void* argThread){
 		num_fit_eval++;
 		parasitism_phase(i,pop,fo);
 		num_fit_eval++;	
-		pthread_mutex_lock(&data_mutex);	
+			
 		for(k=0;k<POP_SIZE;k++){
 			if(fo[k] <= bestfo){
-				bestfo=fo[k];
+			        pthread_mutex_lock(&data_mutex);
+                                bestfo=fo[k];
 				best_index=k;
+                                pthread_mutex_unlock(&data_mutex);
 			}
 		}
-		for(k=0;k<DIM;k++)best[k]=pop[best_index][k];
-		pthread_mutex_unlock(&data_mutex);
+		for(k=0;k<DIM;k++){
+                    pthread_mutex_lock(&data_mutex);
+                    best[k]=pop[best_index][k];
+                    pthread_mutex_unlock(&data_mutex);
+                }
 	}
 }
 
@@ -1066,12 +1071,13 @@ void mutualism_phase(int index_i, double **pop_th, double *best_th, double *fo_t
 	}
 	
 	//cáculo Eqs(1) (2) (3)
-	//pthread_mutex_lock(&data_mutex);
 	for(i=0;i<DIM;i++){
-		mutual[i]=(pop_th[index_i][i]+pop_th[index_j][i])/2;
+		pthread_mutex_lock(&data_mutex);
+                mutual[i]=(pop_th[index_i][i]+pop_th[index_j][i])/2;
 		new_x_i[i]=pop_th[index_i][i]+(array_rand[i]*(best_th[i]-(mutual[i]*bf1)));
 		new_x_j[i]=pop_th[index_j][i]+(array_rand[i]*(best_th[i]-(mutual[i]*bf2)));
-		if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
+		pthread_mutex_unlock(&data_mutex);
+                if(FUNCTION!=10 && FUNCTION!=11 && FUNCTION!=12 && FUNCTION!=13 && FUNCTION!=14){
 			if(new_x_i[i]>u[0])new_x_i[i]=u[0];
 			if(new_x_j[i]>u[0])new_x_j[i]=u[0];
 			if(new_x_i[i]<l[0])new_x_i[i]=l[0];
@@ -1083,26 +1089,25 @@ void mutualism_phase(int index_i, double **pop_th, double *best_th, double *fo_t
 			if(new_x_j[i]<l[i])new_x_j[i]=l[i];
 		}
 	}
-	//pthread_mutex_unlock(&data_mutex);
-	//
+	//	//
 	newfo_i=objfunc(new_x_i, 0);//calculates fitness for new_x_i
 	newfo_j=objfunc(new_x_j, 0);//calculates fitness for new_x_j
-	//pthread_mutex_lock(&data_mutex);
+	pthread_mutex_lock(&data_mutex);
 	if(fo_th[index_i]>=newfo_i){//greedy selection for xi
 		for(i=0;i<DIM;i++){
 			pop_th[index_i][i]=new_x_i[i];
 		}
 		fo_th[index_i] = newfo_i;
 	}
-	//pthread_mutex_unlock(&data_mutex);
-	//pthread_mutex_lock(&data_mutex);
+	pthread_mutex_unlock(&data_mutex);
+	pthread_mutex_lock(&data_mutex);
 	if(fo_th[index_j]>=newfo_j){//greedy selection for xj
 		for(i=0;i<DIM;i++){
 			pop_th[index_j][i]=new_x_j[i];
 		}
 		fo_th[index_j]=newfo_j;
 	}
-	//pthread_mutex_unlock(&data_mutex);
+	pthread_mutex_unlock(&data_mutex);
 	free(array_rand);
 	free(new_x_i);	
 	free(new_x_j);
